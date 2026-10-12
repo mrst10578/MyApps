@@ -20,7 +20,10 @@ jobs:
       - name: Install Android SDK platform
         run: |
           echo "ANDROID_HOME=${ANDROID_HOME:-/usr/local/lib/android/sdk}" >> "$GITHUB_ENV"
-          sdkmanager --sdk_root="${ANDROID_HOME:-/usr/local/lib/android/sdk}" 'platforms;android-35' 'build-tools;35.0.0'
+          SDK_DIR="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          SDK_MANAGER="$(find "$SDK_DIR/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+          if [ -z "$SDK_MANAGER" ]; then echo "sdkmanager not found"; exit 1; fi
+          "$SDK_MANAGER" --sdk_root="$SDK_DIR" 'platforms;android-35' 'build-tools;35.0.0'
       - name: Build installable debug APK
         run: gradle --no-daemon :app:assembleDebug
       - uses: actions/upload-artifact@v4
