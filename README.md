@@ -55,3 +55,8 @@
 در هدر اپ دکمه «بررسی آپدیت» اضافه شده؛ اپ در شروع نیز در صورت وجود اینترنت، بی‌صدا نسخه رسمی جدید را بررسی می‌کند. نصب صرفاً با تأیید کاربر انجام می‌شود و APK ابتدا با SHA-256 و امضای برنامه تأیید می‌شود.
 
 تنظیم کلید امضای ثابت، GitHub Actions و روش انتشار در [UPDATE_SETUP.md](UPDATE_SETUP.md) آمده است. نسخه Debug قبلی با نسخه Release امضاشده قابل به‌روزرسانی مستقیم نیست؛ قبل از مهاجرت، از برنامه‌های ذخیره‌شده پشتیبان JSON تهیه کنید.
+
+
+### Safer update flow from v1.1.1
+
+The app no longer requests `REQUEST_INSTALL_PACKAGES`, and does not download or install other APKs from inside the app. Optional GitHub version checks still work online; on discovery users may open the verified GitHub Releases page in their browser. All study planning, archive and PDF/PNG exports remain offline. This reduces permissions but does not guarantee a Play Protect warning disappears. Official release signing, package identifier and user data storage remain unchanged.

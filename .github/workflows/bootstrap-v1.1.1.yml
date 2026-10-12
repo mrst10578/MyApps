@@ -1,0 +1,96 @@
+name: Bootstrap official signed HaftehNegar v1.1.1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/bootstrap-v1.1.1.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: haftehnegar-bootstrap-v1.1.1
+  cancel-in-progress: false
+
+jobs:
+  first-release:
+    if: github.repository == 'mrst10578/MyApps'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check whether official release already exists
+        id: existing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view v1.1.1 >/dev/null 2>&1; then
+            echo 'skip=true' >> "$GITHUB_OUTPUT"
+            echo 'Official v1.1.1 already exists; no changes made.'
+          else
+            echo 'skip=false' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-java@v4
+        if: steps.existing.outputs.skip == 'false'
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        if: steps.existing.outputs.skip == 'false'
+        with:
+          gradle-version: '8.10.2'
+      - name: Validate release version and signing credentials
+        if: steps.existing.outputs.skip == 'false'
+        env:
+          KEY_DATA: ${{ secrets.HAFTEH_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.HAFTEH_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.HAFTEH_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.HAFTEH_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          grep -Fq "versionName '1.1.1'" app/build.gradle
+          for name in KEY_DATA STORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
+            test -n "${!name}" || { echo "Missing required signing secret: $name"; exit 1; }
+          done
+          printf '%s' "$KEY_DATA" | base64 -d > "$RUNNER_TEMP/hafteh-release.jks"
+          test -s "$RUNNER_TEMP/hafteh-release.jks"
+          chmod 600 "$RUNNER_TEMP/hafteh-release.jks"
+          keytool -list -keystore "$RUNNER_TEMP/hafteh-release.jks" -storepass "$STORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
+      - name: Install Android SDK platform
+        if: steps.existing.outputs.skip == 'false'
+        run: |
+          set -euo pipefail
+          SDK_DIR="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          SDK_MANAGER="$(find "$SDK_DIR/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+          test -n "$SDK_MANAGER"
+          "$SDK_MANAGER" --sdk_root="$SDK_DIR" 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Compile and verify signed APK
+        if: steps.existing.outputs.skip == 'false'
+        env:
+          HAFTEH_KEYSTORE_PATH: ${{ runner.temp }}/hafteh-release.jks
+          HAFTEH_STORE_PASSWORD: ${{ secrets.HAFTEH_STORE_PASSWORD }}
+          HAFTEH_KEY_ALIAS: ${{ secrets.HAFTEH_KEY_ALIAS }}
+          HAFTEH_KEY_PASSWORD: ${{ secrets.HAFTEH_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          gradle --no-daemon :app:assembleRelease
+          mkdir -p release
+          cp app/build/outputs/apk/release/app-release.apk release/HaftehNegar-release.apk
+          BUILD_TOOLS="${ANDROID_HOME:-/usr/local/lib/android/sdk}/build-tools/35.0.0"
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs release/HaftehNegar-release.apk
+          "$BUILD_TOOLS/aapt" dump badging release/HaftehNegar-release.apk | grep -F "name='ir.haftehnegar.app'"
+          "$BUILD_TOOLS/aapt" dump badging release/HaftehNegar-release.apk | grep -F "versionName='1.1.1'"
+          (cd release && sha256sum HaftehNegar-release.apk > HaftehNegar-release.apk.sha256)
+      - name: Publish signed v1.1.1 APK and checksum
+        if: steps.existing.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create v1.1.1 --target "$GITHUB_SHA" \
+            release/HaftehNegar-release.apk \
+            release/HaftehNegar-release.apk.sha256 \
+            --title "HaftehNegar v1.1.1" \
+            --notes "First official signed release. Main planner, archive and exports work offline. The update checker uses GitHub Releases only when online. Android installation requires user confirmation. Debug builds use a different signing certificate; back up stored programs before moving from debug to release."
+      - name: Remove transient signing key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/hafteh-release.jks"
