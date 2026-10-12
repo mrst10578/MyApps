@@ -6,3 +6,9 @@ local.properties
 *.apk
 *.aab
 .DS_Store
+
+# Never publish signing credentials
+*.jks
+*.keystore
+*.p12
+*.pfx

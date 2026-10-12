@@ -25,6 +25,7 @@ public final class MainActivity extends Activity {
     private WebView web;
     private PlannerDb db;
     private NativeBridge bridge;
+    private UpdateManager updater;
     private ValueCallback<Uri[]> fileCallback;
     private String pendingExportId;
     private File pendingExportFile;
@@ -38,6 +39,7 @@ public final class MainActivity extends Activity {
         }
         db = new PlannerDb(this);
         bridge = new NativeBridge(this, db);
+        updater = new UpdateManager(this);
         web = new WebView(this);
         web.setBackgroundColor(Color.rgb(245, 247, 252));
         setContentView(web);
@@ -139,6 +141,13 @@ public final class MainActivity extends Activity {
         }
     }
 
+    UpdateManager getUpdater() { return updater; }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (updater != null) updater.onResume();
+    }
+
     @Override public void onBackPressed() {
         if (web.canGoBack()) web.goBack(); else super.onBackPressed();
     }
@@ -146,6 +155,7 @@ public final class MainActivity extends Activity {
     @Override protected void onDestroy() {
         if (fileCallback != null) { fileCallback.onReceiveValue(null); fileCallback = null; }
         if (bridge != null) bridge.abortAll();
+        if (updater != null) updater.close();
         if (web != null) { web.removeJavascriptInterface("HaftehNative"); web.destroy(); }
         db.close();
         super.onDestroy();

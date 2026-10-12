@@ -95,13 +95,14 @@ body{font-size:15px}
 /* Android: larger touch targets, readable UI, and reliable RTL. */
 @media(max-width:900px){.btn,.tab{font-size:14px;min-height:45px}.field input,.field select,.field textarea{font-size:16px;min-height:48px}.col-item input{font-size:15px;min-height:46px}.panel-heading{font-size:17px}.workspace-title p,.hero p{font-size:14px}.grid-wrap textarea{font-size:16px!important}}
 @media(max-width:560px){.app{padding-top:calc(env(safe-area-inset-top) + 12px);padding-bottom:calc(env(safe-area-inset-bottom) + 40px)}.hero h1{font-size:29px}.brand-label{font-size:21px}.btn{white-space:normal;text-align:center}}
+.head-button[hidden]{display:none!important}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="topbar">
     <div class="brand"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 18h2"/></svg></span><div><div class="brand-label">هفته‌نگار<span style="color:#596eed">.</span></div><div class="brand-sub">استودیوی ساخت برنامه هفتگی</div></div></div>
-    <nav class="head-buttons" aria-label="ابزارها"><button class="head-button" id="calendarButton" type="button">▦ تقویم</button><button class="head-button strong" id="libraryButton" type="button">▤ برنامه‌های من</button></nav><div class="top-info"><div class="pill"><span class="saved-dot"></span><span id="saveStatus">ذخیره خودکار روشن است</span></div><div class="pill">بدون نیاز به اینترنت</div></div>
+    <nav class="head-buttons" aria-label="ابزارها"><button class="head-button" id="checkUpdateButton" type="button" hidden>↻ بررسی آپدیت</button><button class="head-button" id="calendarButton" type="button">▦ تقویم</button><button class="head-button strong" id="libraryButton" type="button">▤ برنامه‌های من</button></nav><div class="top-info"><div class="pill"><span class="saved-dot"></span><span id="saveStatus">ذخیره خودکار روشن است</span></div><div class="pill">بدون نیاز به اینترنت</div></div>
   </header>
   <section class="hero"><div><div class="eyebrow">برنامه‌ریزی، به سبک خودت</div><h1>به هفته‌ات <span>شکل بده.</span></h1><p>داخل هر خانه بنویس، درس‌ها و تاریخ‌ها را تغییر بده و در پایان برنامه‌ات را با یک قالب چشم‌نواز تحویل بگیر.</p><div class="hero-actions"><button class="btn btn-primary" id="goEditor">شروع به نوشتن ←</button><button class="btn btn-ghost" id="goPreview">دیدن خروجی نهایی ↗</button></div></div><div class="hero-art" aria-hidden="true"><div class="floating-grid"><div class="float-head"></div><div class="float-cells"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div></div><span class="orbit">۷ × ۷</span></div></section>
   <div class="workspace-title"><div><h2>فضای کار تو</h2><p>همه چیز قابل ویرایش است؛ از عنوان برنامه تا کوچک‌ترین خانه جدول.</p></div><div class="stats"><div class="stat"><strong id="filledCount">۰</strong> خانه تکمیل‌شده</div><div class="stat"><strong id="subjectCount">۷</strong> ستون</div><div class="stat"><strong id="themeCount">۶</strong> قالب</div></div></div>
@@ -174,6 +175,12 @@ const PALETTES={ocean:{bg:'#eff4ff',dark:'#243e82',accent:'#4869dd',soft:'#dce7f
 const LIB_KEY='hafteh-negar-library-v2', CURRENT_KEY='hafteh-negar-current-plan-v2', CUSTOM_KEY='hafteh-negar-themes-v2';
 // Native Android bridge. The Android database is authoritative; browser storage is only a fallback.
 const nativeBridge = typeof window.HaftehNative !== 'undefined' ? window.HaftehNative : null;
+if (nativeBridge && typeof nativeBridge.checkForUpdates === 'function') {
+  const updateButton = document.getElementById('checkUpdateButton');
+  updateButton.hidden = false;
+  updateButton.addEventListener('click', () => nativeBridge.checkForUpdates(true));
+  setTimeout(() => nativeBridge.checkForUpdates(false), 3000);
+}
 let nativeBootstrap = null;
 if (nativeBridge) {
  try { nativeBootstrap = JSON.parse(nativeBridge.getBootstrap()); } catch (e) { console.error('Native boot error', e); }

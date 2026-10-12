@@ -25,6 +25,10 @@ public final class NativeBridge {
     }
     NativeBridge(MainActivity activity, PlannerDb db) { this.activity=activity;this.db=db; }
 
+    @JavascriptInterface public void checkForUpdates(boolean manual) {
+        activity.runOnUiThread(() -> activity.getUpdater().check(manual));
+    }
+
     @JavascriptInterface public String getBootstrap() {
         try {
             JSONObject result = new JSONObject();

@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- No INTERNET permission: the app operates fully offline. -->
+    <!-- The editor and archive remain offline; this permission is used only for release updates. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
     <application android:label="هفته‌نگار" android:icon="@drawable/ic_launcher"
                  android:usesCleartextTraffic="false" android:allowBackup="false"
                  android:theme="@android:style/Theme.Material.Light.NoActionBar"
                  android:supportsRtl="true">
+        <provider android:name=".UpdateProvider"
+                  android:authorities="ir.haftehnegar.app.updates"
+                  android:exported="false" android:grantUriPermissions="true"/>
         <activity android:name=".MainActivity" android:exported="true"
                   android:windowSoftInputMode="adjustResize">
             <intent-filter>
