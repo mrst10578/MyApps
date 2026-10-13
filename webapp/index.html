@@ -407,7 +407,134 @@ function downloadPortableVersion(){
  toast('نسخه همراه با تمام برنامه‌ها دانلود شد. برای ادامه کار در آینده همین فایل را باز کن.');
 }
 function downloadArchiveBackup(){const pack={format:'hafteh-negar-library',version:5,exportedAt:new Date().toISOString(),themes:customThemes,templates:studioSavedTemplates,plans:library,draft:state};downloadBlob(new Blob([JSON.stringify(pack,null,2)],{type:'application/json;charset=utf-8'}),'Archive-'+exportFileName('json'));}
-async function importPrograms(input){clearTimeout(timer);save();if(input?.format==='hafteh-negar-library'&&Array.isArray(input.plans)){if(!confirm('برنامه‌های فایل پشتیبان بدون حذف برنامه‌های فعلی به آرشیو اضافه شوند؟'))return;for(const theme of (Array.isArray(input.themes)?input.themes:[]).slice(0,30)){if(customThemes.length>=30)break;if(!/^user-[a-z0-9-]{3,60}$/.test(theme?.id||'')||!theme.colors||!['bg','dark','accent','soft','cell','line','muted'].every(k=>/^#[0-9a-f]{6}$/i.test(theme.colors[k]||'')))continue;const newId='user-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),item={id:newId,label:String(theme.label||'قالب بازیابی‌شده').slice(0,32),colors:theme.colors};customThemes.push(item);PALETTES[newId]=theme.colors;PRESETS.push([newId,item.label]);theme._restoreId=newId;}try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(customThemes))}catch(e){}let added=0;const mapping=new Map((input.themes||[]).filter(t=>t._restoreId).map(t=>[t.id,t._restoreId]));for(const item of input.plans.slice(0,150)){if(library.length>=150)break;try{const data=normalize({...item.data,theme:mapping.get(item.data?.theme)||item.data?.theme});const id=uid();library.push({id,title:data.title,kind:data.audience,updatedAt:Date.now()-added,data});added++}catch(e){}}if(Array.isArray(input.templates)){for(const t of input.templates.slice(0,30)){try{const parsed=normalize(t.data);const name=String(t.label||'قالب بازیابی‌شده').slice(0,40);if(studioSavedTemplates.length>=30)break;studioSavedTemplates.push({id:uid(),label:name,data:parsed})}catch(e){}}try{localStorage.setItem('barname-user-templates-v2',JSON.stringify(studioSavedTemplates))}catch(e){}studioWriteIDB('templates',studioSavedTemplates)}if(!added){toast('هیچ برنامه معتبری برای بازیابی پیدا نشد.');return}const first=library[library.length-added];state=normalize(first.data);currentPlanId=first.id;rebuild();save();archiveMutation++;if(!(await persistArchive(library))){toast('آرشیو باز شد ولی ذخیره دائمی ممکن نشد؛ فایل پشتیبان را نگه دار.')}else toast(`${toFa(added)} برنامه به آرشیو اضافه شد.`)}else{const parsed=normalize(input);if(!confirm('برنامه فایل به‌عنوان یک پیش‌نویس جدید باز شود؟'))return;currentPlanId=uid();state=parsed;rebuild();save();toast('برنامه به‌عنوان پیش‌نویس بازیابی شد؛ پس از خروجی می‌توانی آن را به آرشیو اضافه کنی.')}}
+/* Backup ingestion: validate and deduplicate before changing any user data. */
+function barnamePrepareBackup(input){
+ if(!input||input.format!=='hafteh-negar-library'||!Array.isArray(input.plans))
+  throw Error('این فایل پشتیبان معتبر هفته‌نگار نیست.');
+ if(input.plans.length>200 || (Array.isArray(input.themes)&&input.themes.length>100) ||
+    (Array.isArray(input.templates)&&input.templates.length>100))
+  throw Error('تعداد موارد این پشتیبان بیش از حد مجاز است.');
+ const keys=['bg','dark','accent','soft','cell','line','muted'];
+ const colorsKey=colors=>keys.map(key=>String(colors?.[key]||'').toLowerCase()).join('|');
+ const validColors=colors=>colors&&keys.every(key=>typeof colors[key]==='string'&&/^#[0-9a-f]{6}$/i.test(colors[key]));
+ const newThemes=[],newTemplates=[],newPlans=[],themeMap=new Map();
+ const occupied=new Set(Object.keys(PALETTES));
+ const themesByColors=new Map(Object.entries(PALETTES).map(([id,colors])=>[colorsKey(colors),id]));
+ let skippedInvalid=0,skippedDuplicate=0,skippedCapacity=0,skippedThemes=0;
+ for(const theme of (Array.isArray(input.themes)?input.themes:[])){
+  if(!theme||typeof theme!=='object'||!validColors(theme.colors)){skippedThemes++;continue}
+  const colorKey=colorsKey(theme.colors);
+  let themeId=themesByColors.get(colorKey);
+  if(!themeId){
+   if(customThemes.length+newThemes.length>=30){skippedThemes++;continue}
+   const wanted=String(theme.id||'');
+   themeId=/^user-[a-z0-9-]{3,60}$/.test(wanted)&&!occupied.has(wanted)?
+    wanted:'user-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
+   occupied.add(themeId);
+   const colors=Object.fromEntries(keys.map(k=>[k,String(theme.colors[k]).toLowerCase()]));
+   newThemes.push({id:themeId,label:String(theme.label||'قالب بازیابی‌شده').slice(0,32),colors});
+   themesByColors.set(colorKey,themeId);
+  }
+  if(typeof theme.id==='string')themeMap.set(theme.id,themeId);
+ }
+ const restoreData=(raw,kind)=>{
+  if(!raw||typeof raw!=='object'||!Array.isArray(raw.columns))throw Error('برنامه نامعتبر');
+  const previousTheme=typeof raw.theme==='string'?raw.theme:'ocean';
+  const data=normalize({...raw,theme:'ocean'});
+  data.theme=themeMap.get(previousTheme)||(PALETTES[previousTheme]?previousTheme:'ocean');
+  data.audience=kind==='others'?'others':'self';
+  return data;
+ };
+ const sign=(data,kind)=>JSON.stringify({kind,data});
+ const seen=new Set();
+ for(const entry of library){try{
+  const kind=entry.kind==='others'?'others':'self';
+  seen.add(sign(normalize(entry.data),kind));
+ }catch(e){}}
+ const all=[...input.plans];
+ if(input.draft&&typeof input.draft==='object')all.push({data:input.draft,kind:input.draft.audience,label:'پیش‌نویس بازیابی‌شده'});
+ for(const item of all){
+  try{
+   if(!item||typeof item!=='object')throw Error('Invalid item');
+   const kind=item.kind==='others'||item.data?.audience==='others'?'others':'self';
+   const data=restoreData(item.data,kind);
+   const signature=sign(data,kind);
+   if(seen.has(signature)){skippedDuplicate++;continue}
+   seen.add(signature);
+   if(library.length+newPlans.length>=150){skippedCapacity++;continue}
+   const title=String(data.title||'برنامه بازیابی‌شده').slice(0,90);
+   newPlans.push({id:uid(),kind,title,label:String(item.label||title).slice(0,160),
+    updatedAt:Date.now()-newPlans.length,data,exportConfirmed:!!item.exportConfirmed});
+  }catch(e){skippedInvalid++}
+ }
+ const knownTemplates=new Set(studioSavedTemplates.map(t=>{try{
+  return String(t.label||'')+'|'+JSON.stringify(normalize(t.data));
+ }catch(e){return ''}}));
+ for(const template of (Array.isArray(input.templates)?input.templates:[])){
+  try{
+   const label=String(template.label||'قالب بازیابی‌شده').trim().slice(0,40);
+   if(!label)throw Error('No title');
+   const data=restoreData(template.data,template.data?.audience==='others'?'others':'self');
+   const signature=label+'|'+JSON.stringify(data);
+   if(knownTemplates.has(signature)){skippedDuplicate++;continue}
+   knownTemplates.add(signature);
+   if(studioSavedTemplates.length+newTemplates.length>=30){skippedCapacity++;continue}
+   newTemplates.push({id:uid(),label,data});
+  }catch(e){skippedInvalid++}
+ }
+ return {plans:newPlans,themes:newThemes,templates:newTemplates,
+  skippedInvalid,skippedDuplicate,skippedCapacity,skippedThemes};
+}
+async function importPrograms(input){
+ clearTimeout(timer);
+ if(input?.format==='hafteh-negar-library'){
+  await libraryReady;
+  const prepared=barnamePrepareBackup(input);
+  const number=prepared.plans.length+prepared.themes.length+prepared.templates.length;
+  if(!number){toast('مورد جدیدی برای افزودن پیدا نشد؛ داده‌های فعلی بدون تغییر ماندند.');return}
+  const summary='پشتیبان بررسی شد:\n'+toFa(prepared.plans.length)+' برنامه جدید\n'+
+   toFa(prepared.themes.length)+' پالت رنگی جدید\n'+toFa(prepared.templates.length)+' قالب جدید\n'+
+   toFa(prepared.skippedDuplicate)+' مورد تکراری، '+toFa(prepared.skippedInvalid)+' مورد نامعتبر، '+
+   toFa(prepared.skippedCapacity)+' مورد بیش از ظرفیت\n\n'+
+   'آرشیو و پیش‌نویس فعلی حذف یا جایگزین نمی‌شوند. موارد جدید اضافه شوند؟';
+  if(!confirm(summary))return;
+  // Persist the archive first. Failed writes must not replace the in-memory archive.
+  if(prepared.plans.length){
+   archiveMutation++;
+   const candidate=[...prepared.plans,...library];
+   if(!(await persistArchive(candidate)))
+    throw Error('ذخیره آرشیو روی دستگاه ممکن نشد؛ فایل پشتیبان حفظ شده و باید دوباره تلاش کنی.');
+   library=candidate;
+  }
+  if(prepared.themes.length){
+   const next=[...customThemes,...prepared.themes];
+   let saved=false;
+   try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(next));saved=localStorage.getItem(CUSTOM_KEY)===JSON.stringify(next)}catch(e){}
+   const idbSaved=await studioWriteIDB('themes',next);
+   if(!saved&&!idbSaved)throw Error('برنامه‌ها بازیابی شدند ولی ذخیره قالب‌های رنگی ممکن نشد؛ فایل پشتیبان را نگه دار.');
+   customThemes=next;
+   for(const t of prepared.themes){PALETTES[t.id]=t.colors;PRESETS.push([t.id,t.label])}
+  }
+  if(prepared.templates.length){
+   const next=[...studioSavedTemplates,...prepared.templates];
+   let saved=false;
+   try{localStorage.setItem('barname-user-templates-v2',JSON.stringify(next));
+    saved=localStorage.getItem('barname-user-templates-v2')===JSON.stringify(next)}catch(e){}
+   const idbSaved=await studioWriteIDB('templates',next);
+   if(!saved&&!idbSaved)throw Error('بازیابی قالب‌های برنامه کامل نشد؛ فایل پشتیبان را نگه دار.');
+   studioSavedTemplates=next;studioRenderUserTemplates();
+  }
+  if($('libraryModal')?.classList.contains('open'))renderLibrary();
+  renderThemes();
+  toast(toFa(prepared.plans.length)+' برنامه جدید بدون حذف داده‌های قبلی بازیابی شد.');
+  return;
+ }
+ const parsed=normalize(input);
+ if(!confirm('این برنامه به‌عنوان پیش‌نویس جدید باز شود؟ پیش‌نویس فعلی جایگزین می‌شود.'))return;
+ clearTimeout(timer);save();
+ currentPlanId=uid();state=parsed;rebuild();save();
+ toast('برنامه جدید به‌عنوان پیش‌نویس باز شد.');
+}
 /* An exported file and an archived program are separate decisions */
 let pendingArchive=null;
 function askArchiveAfterExport(plan,archiveId,format){
