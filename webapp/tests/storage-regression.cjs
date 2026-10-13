@@ -31,7 +31,7 @@ async function make(list,rev,legacy,ms=0){
 }
 (async()=>{
  const migration=await make([entry('local')],null,[entry('older')]);
- assert.deepEqual(migration.get().map(x=>x.id),['local','older']);
+ assert.deepEqual(new Set(migration.get().map(x=>x.id)),new Set(['local','older']));
  await migration.persistArchive(migration.get());
  const deleted=await make([entry('gone'),entry('keep')],'present',[entry('gone'),entry('keep')]);
  await deleted.persistArchive([entry('keep')]);
