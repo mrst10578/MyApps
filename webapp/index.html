@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111b36">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="هفته‌نگار">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="هفته‌نگار، برنامه‌ساز هفتگی فارسی با خانه‌های قابل ویرایش، قالب‌های حرفه‌ای و خروجی تصویر و PDF.">
+<title>هفته‌نگار | وب‌اپ برنامه‌ساز هفتگی</title>
+<style>
+:root {color-scheme: light;--ink:#14203c;--muted:#70809b;--line:#e4eaf3;--canvas:#f5f7fc;--royal:#4356dd;--white:#fff;--radius:24px;--shadow:0 20px 60px rgba(20,32,60,.065);font-family: "Vazirmatn","Noto Sans Arabic",Tahoma,Arial,sans-serif;font-feature-settings:"ss01";}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--canvas);color:var(--ink);line-height:1.7}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #9ea9ff;outline-offset:3px}button:disabled{opacity:.5;cursor:not-allowed}a{color:inherit}.app{max-width:1600px;padding:23px clamp(15px,3.5vw,54px) 60px;margin:auto}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:23px}.brand{display:flex;align-items:center;gap:11px}.brand-icon{width:48px;height:48px;display:grid;place-items:center;color:white;background:linear-gradient(135deg,#5268ee,#283caa);border-radius:15px;box-shadow:0 9px 22px #4257ce4d}.brand-icon svg{width:27px;height:27px}.brand-label{font-size:20px;font-weight:950;letter-spacing:-.7px}.brand-sub{font-size:11px;color:var(--muted);margin-top:-4px}.top-info{display:flex;align-items:center;gap:13px;color:var(--muted);font-size:12px}.saved-dot{width:7px;height:7px;border-radius:50%;background:#25be8c;display:inline-block;margin-left:5px;box-shadow:0 0 0 4px #25be8c20}.pill{display:flex;align-items:center;gap:7px;border:1px solid #e0e6f1;background:white;padding:8px 12px;border-radius:100px}.hero{position:relative;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(230px, .8fr);min-height:245px;overflow:hidden;isolation:isolate;padding:34px clamp(25px,4vw,57px);border-radius:32px;background:radial-gradient(circle at 75% 5%,#4855a7 0,transparent 43%),linear-gradient(123deg,#142448,#111b35 72%);color:#fff;box-shadow:0 18px 42px rgba(31,47,91,.16)}.hero:before,.hero:after{content:"";position:absolute;border:1px solid #ffffff20;border-radius:50%;z-index:-1}.hero:before{height:470px;width:470px;left:13%;top:-310px}.hero:after{height:360px;width:360px;left:-120px;bottom:-245px}.eyebrow{display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.15px;font-weight:800;color:#b8c7ff}.eyebrow:before{content:"";width:20px;height:2px;background:#7f91f7}.hero h1{font-size:clamp(27px,3vw,44px);line-height:1.6;margin:13px 0 8px;letter-spacing:-1.2px;font-weight:950}.hero h1 span{color:#b6c6ff}.hero p{color:#b8c5e0;font-size:13px;margin:0;max-width:570px}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 16px;border:1px solid transparent;border-radius:12px;font-weight:800;font-size:12px;white-space:nowrap;transition:background .2s,transform .2s,border-color .2s}.btn:hover{transform:translateY(-1px)}.btn-primary{background:var(--royal);color:white;box-shadow:0 9px 18px #4356dd30}.hero .btn-primary{background:white;color:#273572;box-shadow:none}.btn-ghost{background:#ffffff10;border-color:#ffffff37;color:white}.btn-muted{background:white;border-color:var(--line);color:#46536f}.btn-danger{background:#fff7f6;border-color:#ffe0dc;color:#ae3b3b}.hero-art{display:flex;align-items:center;justify-content:center;position:relative}.floating-grid{width:270px;transform:rotate(-9deg);padding:17px;border:1px solid #d8e0ff51;border-radius:22px;background:linear-gradient(150deg,#ffffff25,#ffffff09);box-shadow:0 20px 60px #00000032;backdrop-filter:blur(6px)}.float-head{height:10px;width:85px;background:#c1cfff;border-radius:99px;margin-bottom:17px}.float-cells{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.float-cells b{height:35px;border-radius:8px;border:1px solid #ffffff37;background:#ffffff12}.float-cells b:nth-child(7n + 2){background:#a9bcff83}.float-cells b:nth-child(7n + 5){background:#eeaecc7a}.orbit{position:absolute;left:0;top:10px;border-radius:17px;color:white;background:#5269ed;padding:13px 15px;font-weight:900;box-shadow:0 16px 32px #070e296e;transform:rotate(8deg)}.workspace-title{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:31px 0 15px}.workspace-title h2{font-size:19px;margin:0;font-weight:950;letter-spacing:-.5px}.workspace-title p{font-size:12px;margin:2px 0 0;color:var(--muted)}.stats{display:flex;flex-wrap:wrap;align-items:center;gap:7px}.stat{border:1px solid #e4e9f3;background:#fff;padding:7px 11px;border-radius:11px;color:#64718d;font-size:11px}.stat strong{font-weight:900;color:#233354;font-size:13px}.layout{display:grid;grid-template-columns:minmax(265px,310px) minmax(0,1fr);align-items:start;gap:18px}.sidebar{display:flex;flex-direction:column;gap:17px}.panel{background:white;border:1px solid #e9edf5;border-radius:24px;box-shadow:var(--shadow)}.panel-inner{padding:21px}.panel-heading{display:flex;align-items:center;gap:9px;margin:0 0 16px;font-size:14px;font-weight:950}.panel-heading svg{width:18px;height:18px;stroke:var(--royal)}.field{margin-bottom:13px}.field:last-child{margin-bottom:0}.field label{display:block;color:#596885;font-size:11px;font-weight:850;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;min-height:42px;border:1px solid #e2e8f2;border-radius:11px;color:#263451;background:#fafdff;outline:none;padding:9px 12px;font-size:12px;transition:border-color .16s,box-shadow .16s}.field input:focus,.field textarea:focus,.field select:focus{border-color:#8191ef;box-shadow:0 0 0 3px #8694ef18}.field textarea{resize:vertical;min-height:76px}.field small{color:#9aa6b7;font-size:10px}.date-selects{display:grid;grid-template-columns:1fr 1.1fr 1.1fr;gap:6px}.date-selects select{padding:7px 5px;text-align:center}.week-buttons{display:flex;justify-content:space-between;align-items:center;gap:9px;margin-top:10px;padding:10px;border-radius:12px;background:#f2f5fc}.week-buttons span{font-size:11px;color:#60718f;font-weight:800}.arrow-btn{height:29px;width:29px;display:grid;place-items:center;border-radius:9px;border:1px solid #dce4f4;background:white;color:#4c5f89;font-size:15px}.theme-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.theme-choice{border:2px solid transparent;padding:7px;border-radius:15px;background:#f5f7fc;text-align:right;color:#253452;position:relative}.theme-choice.active{border-color:#5065ea;background:#f2f4ff}.theme-choice:after{content:'✓';font-family:Arial,sans-serif;position:absolute;top:12px;left:12px;border-radius:50%;width:17px;height:17px;display:grid;place-items:center;background:#4356dd;color:white;font-size:11px;opacity:0}.theme-choice.active:after{opacity:1}.theme-choice .mini{display:block;height:53px;border-radius:9px;overflow:hidden;padding:10px 9px 7px;position:relative;margin-bottom:7px}.theme-choice .mini:before{content:"";display:block;height:7px;width:57%;border-radius:4px;margin:0 0 8px}.mini i{display:inline-block;width:16%;height:17px;margin-left:3%;border-radius:3px}.theme-choice b{font-size:11px;display:block;margin:0 3px}.mini.ocean{background:linear-gradient(120deg,#e5edff,#cbdcff)}.mini.ocean:before{background:#233f8a}.mini.ocean i{background:#f8fbff}.mini.sunset{background:linear-gradient(120deg,#fff0e1,#ffdbd9)}.mini.sunset:before{background:#e9754d}.mini.sunset i{background:#fff9f2}.mini.forest{background:linear-gradient(120deg,#e4eee5,#d0e4dc)}.mini.forest:before{background:#296b57}.mini.forest i{background:#f6fff8}.mini.noir{background:linear-gradient(120deg,#191c30,#343f62)}.mini.noir:before{background:#d7c39e}.mini.noir i{background:#edf0f8}.mini.minimal{background:#f8f9fa;border:1px solid #e9ecef}.mini.minimal:before{background:#303640}.mini.minimal i{background:#e4e7eb}.mini.lavender{background:linear-gradient(120deg,#efe8ff,#fbdff2)}.mini.lavender:before{background:#8557c4}.mini.lavender i{background:#ffffff}.cols-list{display:flex;flex-direction:column;gap:8px}.col-item{display:flex;gap:6px;align-items:center}.col-item input{min-width:0;flex:1;background:#fbfcff;border:1px solid #e4eaf4;border-radius:9px;padding:7px 10px;font-size:11px;color:#334364}.delcol{flex:none;width:32px;height:34px;background:#fff6f5;border:1px solid #ffe3e1;color:#bd4e55;border-radius:9px;font-size:15px}.subaction{margin-top:10px;width:100%;border:1px dashed #a2ade8;background:#f7f8ff;color:#4356bc;border-radius:10px;padding:9px;font-size:11px;font-weight:900}.helper{font-size:10px;color:#8692a9;margin:9px 0 0}.main{min-width:0}.editor{overflow:hidden}.editor-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:19px 23px;border-bottom:1px solid #edf0f6}.editor-label{display:flex;gap:9px;align-items:center}.editor-label .bubble{display:grid;place-items:center;width:37px;height:37px;background:#eff2ff;color:#5266d8;border-radius:12px}.editor-label h3{margin:0;font-size:15px;font-weight:950}.editor-label p{font-size:10px;color:#8998b0;margin:0}.mode-actions{display:flex;gap:7px;flex-wrap:wrap}.tab{border:1px solid transparent;background:#f3f5f9;color:#65738b;font-size:11px;padding:9px 13px;border-radius:10px;font-weight:850}.tab.active{background:#e8edff;color:#354bcb;border-color:#d6ddff}.editor-body{padding:19px}.tip{display:flex;gap:9px;align-items:center;background:#f5f8ff;border:1px solid #e8edfd;border-radius:12px;padding:10px 13px;color:#5c6c8b;font-size:11px;margin-bottom:14px}.tip span{font-size:17px}.grid-wrap{width:100%;overflow:auto;overscroll-behavior-x:contain;border:1px solid #dde5f0;border-radius:15px;max-height:750px;position:relative;background:#fff}.edit-grid{display:grid;direction:rtl;min-width:100%;background:#dce3ef;gap:1px}.g-head{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:center;min-height:57px;background:#edf1ff;padding:10px 6px;color:#2f4476;font-size:12px;font-weight:950;text-align:center}.g-head.day-head{z-index:5;background:#e8edff}.g-day{background:#f8faff;padding:13px 10px;min-height:106px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:sticky;right:0;z-index:2;text-align:center}.g-day strong{font-size:12px;color:#27395c}.g-day span{font-size:10px;color:#8595ae}.g-day.friday{background:#fff6f4}.g-day.friday strong{color:#ba5d51}.g-cell{background:#fff;position:relative;min-height:106px}.g-cell:focus-within{z-index:1;box-shadow:inset 0 0 0 2px #8090e9;background:#fbfcff}.g-cell.has-content:before{content:"";position:absolute;right:0;top:0;bottom:0;width:3px;background:#8192ef}.g-cell textarea{display:block;width:100%;height:105px;min-height:105px;resize:none;overflow:hidden;padding:12px 12px;border:0;outline:0;background:transparent;color:#34435f;text-align:right;line-height:1.85;font-size:11px}.g-cell textarea::placeholder{font-size:10px;color:#c8d0df}.g-cell textarea:focus-visible{outline:none}.editor-foot{border-top:1px solid #edf0f6;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 23px;color:#8793a8;font-size:11px}.progress{height:7px;width:105px;border-radius:20px;background:#e7ebf4;overflow:hidden}.progress b{display:block;height:100%;width:0%;border-radius:20px;background:#5769e7;transition:width .25s}.progress-label{display:flex;align-items:center;gap:9px}.actionbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:17px}.actionbar .group{display:flex;flex-wrap:wrap;gap:8px}.bottom-note{font-size:10px;color:#9ba5b7;margin-top:18px;text-align:center}.preview-area{padding:19px;overflow:auto;background:#f4f6fb}.preview-window{min-width:0;position:relative}.preview-frame{transform-origin:top right}.preview-info{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:0 0 13px}.preview-info span{font-size:11px;color:#70809b}.preview-frame{min-width:735px}.sheet{--sheet-bg:#f1f5ff;--sheet-ink:#223e85;--sheet-accent:#4266db;--sheet-soft:#eaf0ff;--sheet-white:#fff;--sheet-line:#dce6fa;--sheet-secondary:#62759b;color:var(--sheet-ink);background:var(--sheet-bg);border-radius:21px;padding:27px;min-height:480px;font-family: "Vazirmatn","Noto Sans Arabic",Tahoma,Arial,sans-serif;direction:rtl;position:relative;overflow:hidden}.sheet:before{content:"";width:210px;height:210px;border:1px solid currentColor;border-radius:50%;position:absolute;left:-95px;top:-100px;opacity:.11;pointer-events:none}.sheet.sunset{--sheet-bg:#fff1e9;--sheet-ink:#813f36;--sheet-accent:#ea7956;--sheet-soft:#ffdfd1;--sheet-white:#fffdfa;--sheet-line:#f5d8cb;--sheet-secondary:#9f7167}.sheet.forest{--sheet-bg:#eaf1e9;--sheet-ink:#245e4c;--sheet-accent:#2d8064;--sheet-soft:#d4e8da;--sheet-white:#fbfff9;--sheet-line:#d2e0d8;--sheet-secondary:#668c77}.sheet.noir{--sheet-bg:#161d33;--sheet-ink:#e3ddcf;--sheet-accent:#d8b879;--sheet-soft:#29324b;--sheet-white:#232c44;--sheet-line:#48526b;--sheet-secondary:#aeb9cd}.sheet.minimal{--sheet-bg:#fafafa;--sheet-ink:#262d39;--sheet-accent:#363e4d;--sheet-soft:#edf0f3;--sheet-white:#fff;--sheet-line:#e0e3e8;--sheet-secondary:#7a828d}.sheet.lavender{--sheet-bg:#f3edff;--sheet-ink:#62418b;--sheet-accent:#9468ce;--sheet-soft:#e5d5fa;--sheet-white:#fffaff;--sheet-line:#e8d8f8;--sheet-secondary:#9982ac}.sheet-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;position:relative;z-index:1}.sheet-kicker{font-size:10px;letter-spacing:1px;color:var(--sheet-accent);font-weight:950}.sheet-h{font-weight:950;letter-spacing:-.4px;font-size:25px;margin:5px 0 1px;line-height:1.55}.sheet-description{font-size:11px;color:var(--sheet-secondary);margin:0;white-space:pre-line}.sheet-stamp{flex:none;border:1px solid var(--sheet-line);background:var(--sheet-white);border-radius:14px;padding:10px 13px;color:var(--sheet-accent);font-size:10px;font-weight:950;text-align:center}.sheet-stamp strong{display:block;font-size:19px}.sheet-divider{height:3px;max-width:88px;background:var(--sheet-accent);border-radius:100px;margin:18px 0}.sheet-table-wrap{border:1px solid var(--sheet-line);border-radius:14px;overflow:hidden;background:var(--sheet-white);position:relative;z-index:1}.sheet-table{width:100%;border-collapse:collapse;table-layout:fixed;direction:rtl}.sheet-table th{padding:13px 5px;font-size:10px;font-weight:950;text-align:center;background:var(--sheet-soft);color:var(--sheet-ink);border-left:1px solid var(--sheet-line);overflow-wrap:anywhere}.sheet-table td{height:66px;padding:9px 8px;text-align:right;vertical-align:top;font-size:9px;line-height:1.85;white-space:pre-wrap;overflow-wrap:anywhere;border-top:1px solid var(--sheet-line);border-left:1px solid var(--sheet-line);color:var(--sheet-ink)}.sheet-table tr:nth-child(even) td{background:color-mix(in srgb,var(--sheet-white),var(--sheet-soft) 24%)}.sheet-table th:last-child,.sheet-table td:last-child{border-left:0}.sheet-table td.day-cell{width:89px;text-align:center;font-weight:950;white-space:normal;font-size:10px;background:var(--sheet-soft)}.sheet-table td.day-cell small{display:block;font-size:9px;color:var(--sheet-secondary);font-weight:500;margin-top:3px}.sheet-table td:empty:before{content:'·';color:var(--sheet-line);font-size:14px}.sheet-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:9px;color:var(--sheet-secondary);margin-top:17px;position:relative;z-index:1}.sheet-signature{font-weight:950;color:var(--sheet-accent);letter-spacing:.2px}.print-area{display:none}.hidden{display:none!important}.toast{position:fixed;z-index:99;bottom:28px;left:50%;transform:translateX(-50%) translateY(30px);background:#1b2944;color:white;border-radius:15px;box-shadow:0 12px 30px #10193052;padding:12px 20px;font-size:12px;font-weight:800;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;text-align:center}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:1080px){.layout{grid-template-columns:minmax(0,1fr)}.main{order:-1}.sidebar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.sidebar .panel:last-child{grid-column:1/-1}.hero{grid-template-columns:minmax(0,1fr) 260px}}@media(max-width:700px){.app{padding:13px 12px 45px}.brand-label{font-size:17px}.brand-icon{width:42px;height:42px}.top-info .pill:last-child{display:none}.hero{display:block;min-height:initial;padding:26px 22px;border-radius:23px}.hero-art{display:none}.hero h1{font-size:28px}.hero-actions .btn{flex:1}.sidebar{grid-template-columns:1fr}.sidebar .panel:last-child{grid-column:auto}.workspace-title{margin-top:25px;align-items:start;flex-direction:column}.editor-top,.editor-foot{padding:14px}.editor-body{padding:11px}.panel{border-radius:19px}.sheet{padding:20px}.actionbar{align-items:stretch;flex-direction:column}.actionbar .group{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.actionbar .group .btn{white-space:normal}.stat{font-size:10px}.top-info{gap:0}.top-info .pill{font-size:10px}.preview-area{padding:10px;overflow:hidden}.preview-window{overflow:hidden}}
+@page{size:A4 landscape;margin:9mm}
+@media print{html,body{background:white!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}.app,.toast{display:none!important}.print-area{display:block!important;position:static!important;padding:0!important;margin:0!important}.print-area .sheet{border-radius:0!important;box-shadow:none!important;min-height:0!important;padding:13px!important}.print-area .sheet-h{font-size:21px!important}.print-area .sheet-divider{margin:10px 0!important}.print-area .sheet-table th{padding:6px 3px!important;font-size:8px!important}.print-area .sheet-table td{height:51px!important;min-height:0!important;padding:4px!important;font-size:7.8px!important;line-height:1.4!important}.print-area .sheet-table td.day-cell{font-size:9px!important}.print-area .sheet-footer{margin-top:11px!important}.print-area .sheet-stamp{padding:6px 8px!important}.print-area .sheet-description{font-size:9px!important}}
+
+/* features version 2 */
+.topbar{flex-wrap:wrap}.head-buttons{display:flex;align-items:center;gap:9px;margin-inline-start:auto}.head-button{background:#fff;border:1px solid #dce4f2;border-radius:12px;color:#344a7b;font-weight:850;padding:9px 16px;font-size:12px}.head-button.strong{background:#e9edff;color:#364fbd;border-color:#d5ddff}.head-button:hover{border-color:#8598dc}.audience-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.audience-option input{position:absolute;opacity:0;width:1px;height:1px}.audience-option span{display:block;text-align:center;border:1px solid #e1e6f2;border-radius:11px;padding:10px 5px;font-size:11px;font-weight:850;background:#f7f9fd;color:#63708a;cursor:pointer}.audience-option input:checked+span{background:#edf1ff;color:#304fc0;border-color:#657de7}.audience-option input:focus-visible+span{outline:3px solid #9ea9ff;outline-offset:2px}
+.modal{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:16px;direction:rtl}.modal.open{display:flex}.modal-backdrop{position:absolute;inset:0;background:rgba(12,22,43,.62);backdrop-filter:blur(5px)}.modal-card{width:min(100%,980px);max-height:min(94vh,980px);overflow:auto;position:relative;background:white;border:1px solid #e6e9f3;border-radius:26px;box-shadow:0 35px 110px #02092080;padding:25px}.modal-header{display:flex;align-items:start;justify-content:space-between;gap:16px;margin-bottom:20px}.modal-header h2{font-size:22px;margin:0;font-weight:950}.modal-sub{margin:2px 0;color:#71809b;font-size:12px}.modal-kicker{color:#576de1;font-size:10px;font-weight:900}.modal-close{width:35px;height:35px;border:1px solid #e3e9f5;background:#f6f8fd;border-radius:11px;font-size:24px;color:#50607d;line-height:1}
+.calendar-card{max-width:720px}.calendar-nav{display:flex;align-items:center;gap:10px;background:#f4f6fd;border-radius:13px;padding:10px;margin-bottom:12px}.calendar-nav>div{text-align:center;flex:1}.calendar-nav strong{font-weight:950;font-size:16px;display:block}.calendar-nav small{font-size:10px;color:#8190a8;display:block}.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.calendar-weekday{text-align:center;font-size:11px;font-weight:850;color:#8190a8;padding:9px 0}.calendar-day{min-height:70px;position:relative;padding:8px;border:1px solid #e5eaf4;border-radius:11px;background:#fff;text-align:right;color:#273454;display:flex;flex-direction:column;gap:6px;align-items:start}.calendar-day:hover{border-color:#7b8ded;background:#f8faff}.calendar-day.empty{border-color:transparent;background:transparent}.calendar-day strong{font-size:14px}.calendar-day small{font-size:9px;line-height:1.4;color:#71809b;overflow:hidden;max-height:24px}.calendar-day.holiday{background:#fff8f7;border-color:#ffdeda}.calendar-day.holiday strong{color:#c34b4b}.calendar-day.selected{outline:2px solid #516ade;outline-offset:-2px;background:#eff2ff}.calendar-day.today:after{content:"";position:absolute;top:8px;left:9px;width:6px;height:6px;background:#5771e7;border-radius:50%}.calendar-detail{margin-top:13px;padding:15px;border-radius:15px;background:#eff3ff;font-size:12px}.calendar-detail strong{font-weight:900}.calendar-detail ul{padding-right:20px;margin:10px 0}.calendar-detail li{margin:4px 0}.holiday-label{color:#b54040;font-weight:850}.calendar-detail .btn{margin-top:9px}.calendar-bottom{margin-top:13px;border-top:1px solid #e9edf5;padding-top:12px;font-size:11px}.calendar-bottom a{color:#455ed0;font-weight:900}.calendar-bottom p{color:#8a95a9;margin:5px 0 0}
+.library-card{max-width:1120px}.library-columns{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e7eaf3;border-radius:18px;overflow:hidden;min-height:160px}.library-side{padding:16px;min-width:0}.others-side{border-right:2px dashed #cbd4e7}.library-side h3{margin:0 0 12px;font-size:13px;font-weight:950}.library-side h3 span{display:inline-grid;place-items:center;background:#eef2fc;color:#5671c4;width:21px;height:21px;border-radius:8px;font-size:11px}.library-list{display:flex;flex-direction:column;gap:7px;max-height:170px;overflow:auto}.saved-program{width:100%;text-align:right;border:1px solid #e5eaf3;background:#fafbff;border-radius:11px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;color:#33405e}.saved-program.active{border-color:#5e74e7;background:#eff2ff}.saved-program strong{display:block;font-size:12px}.saved-program small{font-size:10px;color:#8190a5}.library-empty{font-size:11px;color:#8f9bb0;padding:15px;border:1px dashed #e5eaf2;border-radius:11px;text-align:center}.library-preview{margin-top:16px;border:1px solid #e7ebf4;border-radius:19px;overflow:hidden}.preview-toolbar{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:13px 15px;border-bottom:1px solid #ebeff8}.preview-toolbar strong{display:block;font-size:13px}.preview-toolbar small{display:block;font-size:10px;color:#8390a6}.zoom-tools{display:flex;align-items:center;gap:7px;direction:ltr}.zoom-tools button{width:29px;height:29px;border:1px solid #dce4f4;background:white;border-radius:9px;font-size:16px;color:#5367b3}.zoom-tools input{width:90px;accent-color:#4d65db}.zoom-tools span{font-weight:850;font-size:11px;min-width:40px;text-align:center}.library-preview-viewport{background:#f0f3f9;padding:20px;overflow:auto;max-height:480px;min-height:150px}.library-preview-size{width:100%;min-height:0;position:relative}.library-preview-sheet{width:980px;transform-origin:top right}.library-preview-sheet .sheet{min-height:600px}.library-actions{padding:14px;display:flex;gap:9px;flex-wrap:wrap;border-top:1px solid #e7edf5}.library-actions button{flex:1}.library-actions button:disabled{opacity:.45}
+.theme-card{max-width:860px}.theme-builder{display:grid;grid-template-columns:minmax(190px,270px) minmax(0,1fr);gap:20px}.theme-controls{display:flex;flex-direction:column;gap:12px}.theme-controls label{font-size:11px;color:#5b6985;font-weight:900;display:flex;flex-direction:column;gap:7px}.theme-controls input:not([type=color]){min-height:43px;border:1px solid #e1e7f2;border-radius:10px;padding:8px 12px}.theme-controls input[type=color]{width:100%;height:44px;border:1px solid #e2e8f3;border-radius:12px;padding:5px;background:white;cursor:pointer}.theme-builder-preview{background:#eff2f8;padding:12px;min-width:0;border-radius:16px;overflow:hidden}#customThemePreview{width:100%;min-width:0}#customThemePreview .sheet{min-height:380px}#customThemePreview .sheet-table td{height:34px;font-size:8px}.mini.custom{background:var(--mini-bg)}.mini.custom:before{background:var(--mini-accent)}.mini.custom i{background:var(--mini-cell)}
+@media(max-width:700px){.topbar{gap:10px}.head-buttons{order:3;flex:0 0 100%}.head-button{flex:1}.modal{padding:5px}.modal-card{border-radius:17px;padding:14px;max-height:98dvh}.modal-header h2{font-size:17px}.calendar-day{min-height:53px;padding:5px}.calendar-day small{font-size:8px;max-height:19px}.calendar-grid{gap:3px}.calendar-nav{gap:4px}.calendar-nav strong{font-size:13px}.calendar-nav .btn{padding:8px}.library-columns{grid-template-columns:1fr}.others-side{border-right:none;border-top:2px dashed #cbd4e7}.library-list{max-height:125px}.library-preview-viewport{padding:8px;max-height:360px}.library-actions .btn{flex-basis:42%;white-space:normal}.theme-builder{grid-template-columns:1fr}.theme-builder-preview{max-height:270px;overflow:auto}}
+/* printing: full A4 landscape instead of a half-empty page */
+@page{size:A4 landscape;margin:0}
+@media print{html,body{margin:0!important;padding:0!important;width:297mm!important;height:210mm!important}.app,.toast,.modal{display:none!important}.print-area{display:block!important;margin:0!important;padding:0!important}.print-area .sheet{box-sizing:border-box!important;width:297mm!important;height:210mm!important;min-height:210mm!important;padding:7mm!important;border-radius:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;break-inside:avoid;page-break-inside:avoid}.print-area .sheet-top{flex:none}.print-area .sheet-divider{flex:none;margin:3mm 0!important}.print-area .sheet-table-wrap{display:flex!important;flex:1 1 auto!important;min-height:0!important;overflow:hidden!important}.print-area .sheet-table{width:100%!important;height:100%!important;table-layout:fixed!important}.print-area .sheet-table tbody tr{height:14.285%!important}.print-area .sheet-table th{padding:2mm 1mm!important;font-size:9pt!important}.print-area .sheet-table td{height:auto!important;padding:2mm!important;vertical-align:top!important;font-size:8.5pt!important;line-height:1.55!important}.print-area .sheet-footer{flex:none;margin-top:3mm!important}.print-area .sheet-h{font-size:22pt!important}.print-area .sheet-stamp{padding:2mm 3mm!important} }
+
+/* v3 accessibility/readability: type is big enough to actually use */
+body{font-size:15px}
+.brand-sub,.top-info,.eyebrow,.workspace-title p,.stat,.field label,.field small,.helper,.tip,.editor-label p,.editor-foot,.bottom-note,.modal-sub,.library-empty,.calendar-nav small,.saved-program small,.preview-toolbar small,.theme-controls label{font-size:13px}
+.brand-label{font-size:23px}
+.hero p{font-size:16px;line-height:1.95}
+.hero h1{font-size:clamp(30px,3.3vw,46px)}
+.btn,.head-button,.tab,.pill,.subaction{font-size:14px;min-height:43px}
+.panel-heading,.editor-label h3,.library-side h3{font-size:16px}
+.workspace-title h2{font-size:22px}
+.field input,.field textarea,.field select,.col-item input{font-size:15px;min-height:45px}
+.field small,.helper{line-height:1.9}
+.theme-choice b,.week-buttons span,.g-head,.g-day strong,.g-day span{font-size:14px}
+.g-head{min-height:63px;padding:11px 7px}
+.g-cell,.g-day{min-height:128px}
+.g-cell textarea{font-size:15px;line-height:1.85;min-height:128px;padding:13px 11px;color:#243653}
+.g-cell textarea::placeholder{font-size:13px;color:#9daabe}
+.sheet{font-size:14px}
+.sheet-h{font-size:28px}
+.sheet-description{font-size:14px}
+.sheet-table th{font-size:13px;padding:13px 7px}
+.sheet-table td{font-size:12px;line-height:1.6;min-height:75px;height:75px;padding:10px 9px}
+.sheet-table td.day-cell{font-size:13px}
+.sheet-table td.day-cell small{font-size:11px}
+.sheet-footer,.sheet-stamp{font-size:12px}
+.sheet-stamp strong{font-size:20px}
+.saved-program strong{font-size:15px}
+.preview-toolbar strong{font-size:16px}
+.export-hint{display:inline-flex;max-width:260px;align-items:center;font-size:12px;line-height:1.65;color:#74839e}
+.export-save-card{max-width:520px;padding:28px}
+.export-save-card .modal-header{margin-bottom:12px}
+.export-save-card h2{font-size:21px;line-height:1.7}
+.export-success-icon{width:53px;height:53px;border-radius:17px;background:#e9f7f1;color:#159364;display:grid;place-items:center;font-size:27px;font-weight:950;margin-bottom:12px}
+.export-save-desc{color:#5f6d83;font-size:15px;line-height:2;margin:3px 0 16px}
+.export-save-program{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 13px;background:#f3f5fc;border:1px solid #e4e9f7;border-radius:13px;font-size:14px;color:#77849b}
+.export-save-program strong{font-size:15px;color:#26365c;flex:1}
+.export-save-program small{font-size:12px;color:#596cd4}
+.save-target{border:0;padding:0;margin:17px 0 20px}
+.save-target legend{font-size:14px;font-weight:900;margin-bottom:10px;color:#394865}
+.save-target-options{display:flex;gap:10px}
+.save-target-options label{flex:1;background:#fafbff;border:1px solid #dce4f4;border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:850;cursor:pointer}
+.save-target-options label:has(input:checked){border-color:#7688df;background:#eef1ff;color:#374fba}
+.save-target-options input{width:17px;height:17px;accent-color:#4356dd}
+.export-save-actions{display:flex;gap:9px;flex-wrap:wrap}
+.export-save-actions .btn{flex:1;white-space:normal;text-align:center;font-size:14px}
+.export-save-footnote{margin:13px 0 0;color:#8693a7;font-size:12px;line-height:1.9}
+@media(max-width:700px){.sidebar{grid-template-columns:minmax(0,1fr)}.sidebar>.panel,.sidebar .panel-inner{min-width:0;max-width:100%}.date-selects{grid-template-columns:repeat(3,minmax(0,1fr))}.date-selects select{min-width:0;width:100%}.export-save-card{padding:20px}.save-target-options{gap:7px}.export-save-actions{flex-direction:column}.brand-label{font-size:21px}.editor-body{padding:12px}.tip{font-size:13px}.field input,.field textarea,.field select{font-size:16px}.head-button{font-size:14px}.theme-choice b{font-size:13px}.library-side h3{font-size:14px}}
+@media print{
+ .print-area .sheet-table td{font-size:9.8pt!important;line-height:1.55!important}
+ .print-area .sheet-table th{font-size:10pt!important}
+ .print-area .sheet-table td.day-cell{font-size:10pt!important}
+ .print-area .sheet-table td.day-cell small{font-size:9pt!important}
+ .print-area .sheet-description{font-size:10pt!important}
+}
+
+/* v4: explicit visibility of persistent archive and typography */
+.saved-program strong{font-size:15px;line-height:1.85;white-space:normal;overflow-wrap:anywhere}
+.saved-program small{font-size:12px;line-height:1.7}
+.library-side{min-width:0}
+.library-list{max-height:245px}
+.export-save-card .modal-header h2{font-size:22px}
+@media(max-width:700px){.saved-program{padding:11px 10px}}
+/* v5: clear, visible backup and persistence status */
+.archive-storage-note{display:flex;gap:12px;align-items:flex-start;border:1px solid #d6e2fc;border-radius:14px;padding:14px 16px;margin:4px 0 15px;background:#f4f7ff;color:#35476f;line-height:1.95;font-size:14px}
+.archive-storage-note strong{display:block;font-size:15px}.archive-storage-note p{margin:1px 0 0}.archive-storage-note.problem{background:#fff5ed;border-color:#f7ccad;color:#8a3a19}.archive-storage-note.good{background:#eef9f4;border-color:#bce4d4;color:#1f674f}.archive-storage-note .state-icon{font-size:23px;line-height:1.6}
+.archive-portable-actions{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}.archive-portable-actions button{flex:1;min-width:190px;font-size:14px;white-space:normal}
+.library-card{overflow-y:auto}.archive-storage-tip{color:#7785a0;font-size:12px;line-height:1.9;margin:0 0 12px}
+@media(max-width:700px){.archive-storage-note{padding:12px;font-size:13px}.archive-portable-actions button{flex-basis:100%}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 18h2"/></svg></span><div><div class="brand-label">هفته‌نگار<span style="color:#596eed">.</span></div><div class="brand-sub">استودیوی ساخت برنامه هفتگی</div></div></div>
+    <nav class="head-buttons" aria-label="ابزارها"><button class="head-button" id="calendarButton" type="button">▦ تقویم</button><button class="head-button strong" id="libraryButton" type="button">▤ برنامه‌های من</button><button class="head-button" id="installPwaButton" type="button" title="افزودن به صفحه اصلی">＋ نصب وب‌اپ</button></nav><div class="top-info"><div class="pill"><span class="saved-dot"></span><span id="saveStatus">ذخیره خودکار روشن است</span></div><div class="pill" id="networkStatus">آماده برای استفاده آفلاین</div></div>
+  </header>
+  <section class="hero"><div><div class="eyebrow">برنامه‌ریزی، به سبک خودت</div><h1>به هفته‌ات <span>شکل بده.</span></h1><p>داخل هر خانه بنویس، درس‌ها و تاریخ‌ها را تغییر بده و در پایان برنامه‌ات را با یک قالب چشم‌نواز تحویل بگیر.</p><div class="hero-actions"><button class="btn btn-primary" id="goEditor">شروع به نوشتن ←</button><button class="btn btn-ghost" id="goPreview">دیدن خروجی نهایی ↗</button></div></div><div class="hero-art" aria-hidden="true"><div class="floating-grid"><div class="float-head"></div><div class="float-cells"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div></div><span class="orbit">۷ × ۷</span></div></section>
+  <div class="workspace-title"><div><h2>فضای کار تو</h2><p>همه چیز قابل ویرایش است؛ از عنوان برنامه تا کوچک‌ترین خانه جدول.</p></div><div class="stats"><div class="stat"><strong id="filledCount">۰</strong> خانه تکمیل‌شده</div><div class="stat"><strong id="subjectCount">۷</strong> ستون</div><div class="stat"><strong id="themeCount">۶</strong> قالب</div></div></div>
+  <div class="layout">
+    <aside class="sidebar">
+      <section class="panel"><div class="panel-inner"><h3 class="panel-heading"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 20h16M6 17l2-8 3 5 3-9 4 12"/></svg>اطلاعات برنامه</h3><div class="field"><label for="planTitle">عنوان برنامه</label><input id="planTitle" maxlength="90" placeholder="مثلاً برنامه هفتگی کنکور"></div><div class="field"><label>این برنامه برای چه کسی است؟</label><div class="audience-choices" role="radiogroup" aria-label="مخاطب برنامه"><label class="audience-option"><input type="radio" name="audience" value="self" checked><span>برای خودم</span></label><label class="audience-option"><input type="radio" name="audience" value="others"><span>برای دیگران</span></label></div></div><div class="field"><label for="planSubtitle">توضیح کوتاه</label><input id="planSubtitle" maxlength="160" placeholder="مثلاً برای رسیدن به هدفم"></div><div class="field"><label>تاریخ شروع هفته (شمسی)</label><div class="date-selects"><select id="pDay" aria-label="روز"></select><select id="pMonth" aria-label="ماه"></select><select id="pYear" aria-label="سال"></select></div><div class="week-buttons"><button class="arrow-btn" id="prevWeek" title="هفته قبل" aria-label="هفته قبل">❯</button><span id="weekLabel"></span><button class="arrow-btn" id="nextWeek" title="هفته بعد" aria-label="هفته بعد">❮</button></div><small>هر تاریخی انتخاب کنی، شنبه همان هفته تنظیم می‌شود.</small></div><div class="field"><label for="footerNote">جمله پایین برنامه</label><input id="footerNote" maxlength="170" placeholder="یک قدم جلوتر از دیروز"></div></div></section>
+      <section class="panel"><div class="panel-inner"><h3 class="panel-heading"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16v16H4zM4 10h16M10 10v10"/></svg>قالب و ظاهر خروجی</h3><div class="theme-options" id="themeOptions" role="group" aria-label="انتخاب قالب"></div><button class="subaction" id="addNewTheme" type="button">＋ اضافه کردن قالب جدید</button><p class="helper">قالب‌های اختصاصی با رنگ‌های کنترل‌شده ساخته می‌شوند تا جدول، خوانایی و خروجی PDF سازگار بمانند.</p></div></section>
+      <section class="panel"><div class="panel-inner"><h3 class="panel-heading"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>ستون‌های برنامه</h3><div id="columnsList" class="cols-list"></div><button class="subaction" id="addColumn">+ افزودن ستون جدید</button><p class="helper">برای تغییر نام هر درس، داخل کادر آن بنویس. حذف ستون محتوای آن را هم حذف می‌کند.</p></div></section>
+    </aside>
+    <main class="main" id="editorAnchor">
+      <section class="panel editor"><div class="editor-top"><div class="editor-label"><span class="bubble">▦</span><div><h3 id="editingHeading">جدول برنامه‌ریزی</h3><p>به‌جای هر خانه خالی می‌توانی متن دلخواهت را بنویسی</p></div></div><div class="mode-actions"><button id="editTab" class="tab active" aria-pressed="true">✎ ویرایش جدول</button><button id="previewTab" class="tab" aria-pressed="false">◉ پیش‌نمایش نهایی</button></div></div>
+        <div id="editSection" class="editor-body"><div class="tip"><span>✍</span><div>روی هر خانه بزن و تایپ کن. می‌توانی چند خط بنویسی، مثلاً «فصل ۳»، «تست زمان‌دار» یا «مرور». در موبایل، جدول را به چپ و راست بکش تا بقیه ستون‌ها را ببینی.</div></div><div class="grid-wrap" id="gridWrap"><div id="editGrid" class="edit-grid" role="group" aria-label="جدول هفتگی قابل ویرایش"></div></div></div>
+        <div id="previewSection" class="preview-area hidden"><div class="preview-info"><strong style="font-size:12px">پیش‌نمایش برنامه آماده</strong><span>دقیقاً همین چیدمان برای چاپ و PDF استفاده می‌شود</span></div><div class="preview-window" id="previewWindow"><div class="preview-frame" id="previewFrame"></div></div></div>
+        <div class="editor-foot"><div class="progress-label"><span id="progressText">۰ از ۴۹ خانه</span><div class="progress"><b id="progressFill"></b></div></div><span>نوشته‌ها به‌صورت پیش‌نویس ذخیره می‌شوند؛ ثبت در آرشیو بعد از خروجی با اجازه توست.</span></div>
+      </section>
+      <div class="actionbar"><div class="group"><button class="btn btn-primary" id="downloadPng">↓ دریافت تصویر PNG</button><button class="btn btn-muted" id="printPdf">▤ دانلود PDF تمام‌صفحه</button></div><div class="group"><button class="btn btn-muted" id="exportJson">↧ پشتیبان همه برنامه‌ها</button><button class="btn btn-muted" id="importJson">↥ بازکردن برنامه</button><span class="export-hint">آرشیو پس از دریافت خروجی و با تأیید تو ساخته می‌شود.</span><button class="btn btn-danger" id="resetPlan">＋ برنامه جدید</button></div></div>
+      <p class="bottom-note">پیش‌نویس‌ها روی همین دستگاه حفظ می‌شوند. برنامه فقط بعد از خروجی PNG یا PDF و تأیید تو وارد آرشیو می‌شود. برای انتقال آرشیو، فایل پشتیبان بگیر.</p>
+    </main>
+  </div>
+</div>
+
+<div class="modal" id="calendarModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="calendarModalTitle">
+ <div class="modal-backdrop" data-close="calendarModal"></div><div class="modal-card calendar-card">
+  <div class="modal-header"><div><span class="modal-kicker">تقویم ایران</span><h2 id="calendarModalTitle">تقویم شمسی و مناسبت‌ها</h2></div><button class="modal-close" data-close="calendarModal" aria-label="بستن">×</button></div>
+  <div class="calendar-nav"><button id="calPrev" class="arrow-btn" aria-label="ماه قبل">❯</button><div><strong id="calMonthLabel"></strong><small id="calSourceState"></small></div><button id="calNext" class="arrow-btn" aria-label="ماه بعد">❮</button><button id="calToday" class="btn btn-muted">امروز</button></div>
+  <div class="calendar-grid" id="calendarGrid" aria-label="روزهای ماه"></div>
+  <div class="calendar-detail" id="calendarDetail"></div>
+  <div class="calendar-bottom"><a href="https://calendar.ut.ac.ir/documents/2139738/7092644/Calendar-1405.pdf" target="_blank" rel="noopener noreferrer">تقویم رسمی ۱۴۰۵، مرکز تقویم دانشگاه تهران ↗</a><p>مناسبت‌های تکمیلی از دادهٔ تقویم سالانه دریافت می‌شوند. هنگام قطع اینترنت، فقط مناسبت‌های منتخب آفلاین نشان داده می‌شوند؛ اطلاعات سال‌های دیگر ممکن است کامل نباشد.</p></div>
+ </div>
+</div>
+<div class="modal" id="libraryModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="libraryModalTitle">
+ <div class="modal-backdrop" data-close="libraryModal"></div><div class="modal-card library-card">
+  <div class="modal-header"><div><span class="modal-kicker">آرشیو شخصی</span><h2 id="libraryModalTitle">برنامه‌های من</h2><p class="modal-sub">فقط برنامه‌هایی که بعد از خروجی، ذخیره‌شان را تأیید کردی اینجا ثبت می‌شوند. برنامه‌های قدیمی هم محفوظ‌اند.</p></div><button class="modal-close" data-close="libraryModal" aria-label="بستن">×</button></div>
+  <div id="archiveStorageNotice" class="archive-storage-note" aria-live="polite"><span class="state-icon">◌</span><div><strong>وضعیت نگهداری آرشیو</strong><p id="archiveStorageMessage">در حال بررسی فضای ذخیره‌سازی…</p></div></div>
+  <div class="archive-portable-actions"><button type="button" class="btn btn-primary" id="downloadPortableHtml">⬇ دانلود نسخه همراه با برنامه‌ها (HTML)</button><button type="button" class="btn btn-muted" id="downloadArchiveJson">⬇ پشتیبان آرشیو (JSON)</button><button type="button" class="btn btn-muted" id="importArchiveFromLibrary">↥ بازیابی آرشیو از فایل</button></div>
+  <p class="archive-storage-tip">برای اینکه برنامه‌ها حتی در صورت تغییر نام فایل، عوض‌شدن مرورگر یا پاک‌شدن حافظه باقی بمونن، نسخه HTML همراه با برنامه‌ها رو نگه دار. دفعه بعد همان فایل را باز کن.</p>
+  <div class="library-columns"><section class="library-side"><h3>برنامه‌هایی که برای خودم ساختم <span id="selfCount">۰</span></h3><div id="selfPlans" class="library-list"></div></section><section class="library-side others-side"><h3>برنامه‌هایی که برای دیگران ساختم <span id="othersCount">۰</span></h3><div id="otherPlans" class="library-list"></div></section></div>
+  <div class="library-preview"><div class="preview-toolbar"><div><strong id="selectedPlanTitle">یک برنامه انتخاب کن</strong><small id="selectedPlanMeta"></small></div><div class="zoom-tools"><button id="zoomOut" aria-label="کوچک‌نمایی">−</button><input aria-label="میزان بزرگ‌نمایی پیش‌نمایش" id="zoomRange" type="range" min="50" max="200" step="10" value="100"><span id="zoomLabel">۱۰۰٪</span><button id="zoomIn" aria-label="بزرگ‌نمایی">＋</button></div></div>
+   <div class="library-preview-viewport" id="libraryViewport"><div class="library-preview-size" id="libraryPreviewSize"><div id="libraryPreviewSheet" class="library-preview-sheet"></div></div></div>
+   <div class="library-actions"><button class="btn btn-primary" id="libraryPng">↓ خروجی PNG</button><button class="btn btn-muted" id="libraryPdf">▤ دانلود PDF افقی</button><button class="btn btn-muted" id="libraryOpen">✎ بازکردن برای ویرایش</button><button class="btn btn-danger" id="libraryDelete">حذف برنامه</button></div>
+  </div>
+ </div>
+</div>
+<div class="modal" id="themeModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="themeModalTitle">
+ <div class="modal-backdrop" data-close="themeModal"></div><div class="modal-card theme-card"><div class="modal-header"><div><span class="modal-kicker">استودیوی قالب</span><h2 id="themeModalTitle">ساخت قالب جدید</h2><p class="modal-sub">رنگ‌ها را انتخاب کن؛ ساختار جدول و نسبت رنگ‌ها خودکار تنظیم می‌شوند.</p></div><button class="modal-close" data-close="themeModal" aria-label="بستن">×</button></div>
+ <div class="theme-builder"><div class="theme-controls"><label>نام قالب<input id="customThemeName" maxlength="32" placeholder="مثلاً آبی اقیانوسی" value="قالب اختصاصی من"></label><label>رنگ اصلی<input type="color" id="customThemeAccent" value="#3468db"></label><label>رنگ زمینه<input type="color" id="customThemeBg" value="#eff5ff"></label><label>رنگ نوشته<input type="color" id="customThemeInk" value="#172c53"></label><p class="helper">رنگ متن در صورت کم بودن کنتراست به‌صورت خودکار اصلاح می‌شود. هیچ کد CSS یا HTML وارد برنامه نمی‌شود.</p><button id="createTheme" class="btn btn-primary">✓ ساخت و استفاده از قالب</button></div><div class="theme-builder-preview"><div id="customThemePreview"></div></div></div>
+ </div></div>
+<div class="modal" id="exportSaveModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="exportSaveTitle" aria-describedby="exportSaveDescription">
+  <div class="modal-backdrop" data-close="exportSaveModal"></div>
+  <div class="modal-card export-save-card">
+    <div class="modal-header"><div><span class="modal-kicker">آرشیو برنامه‌ها</span><h2 id="exportSaveTitle">این برنامه در «برنامه‌های من» ذخیره بشه؟</h2></div><button class="modal-close" data-close="exportSaveModal" aria-label="بستن بدون ذخیره">×</button></div>
+    <div class="export-success-icon" aria-hidden="true">✓</div>
+    <p id="exportSaveDescription" class="export-save-desc">خروجی آماده شد. می‌تونی یک نسخه از برنامه رو در آرشیوت نگه داری یا فقط فایل رو دریافت کنی.</p>
+    <div class="export-save-program"><span>برنامه:</span><strong id="exportSavePlanName"></strong><small id="exportSaveFormat"></small></div>
+    <fieldset class="save-target"><legend>کجا ذخیره بشه؟</legend><div class="save-target-options"><label><input type="radio" name="exportAudience" value="self" checked><span>برای خودم</span></label><label><input type="radio" name="exportAudience" value="others"><span>برای دیگران</span></label></div></fieldset>
+    <div class="export-save-actions"><button type="button" class="btn btn-primary" id="confirmExportSave">✓ بله، ذخیره در برنامه‌های من</button><button type="button" class="btn btn-muted" id="declineExportSave">نه، فقط دریافت فایل</button></div>
+    <p class="export-save-footnote">اگر ذخیره نکنی، فایل خروجی دریافت‌شده باقی می‌مونه و فقط نسخه آرشیوی ساخته نمی‌شه.</p>
+  </div>
+</div>
+<div class="print-area" id="printArea" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input class="sr-only" id="importFile" type="file" accept="application/json,.json" aria-label="انتخاب فایل پشتیبان برنامه">
+<script type="application/json" id="portableArchiveData">{"format":"hafteh-negar-portable","version":5,"plans":[],"themes":[],"draft":null}</script>
+<script>
+(() => {
+'use strict';
+const KEY='hafteh-negar-v1', DAYS=['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه'], MONTHS=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const PRESETS=[['ocean','آبی آسمانی'],['sunset','گرمای غروب'],['forest','سبز آرامش'],['noir','سرمه‌ای لوکس'],['minimal','مینیمال'],['lavender','یاسی رؤیایی']];
+const PALETTES={ocean:{bg:'#eff4ff',dark:'#243e82',accent:'#4869dd',soft:'#dce7ff',cell:'#ffffff',line:'#d2def9',muted:'#647ba6'},sunset:{bg:'#fff1e9',dark:'#813f36',accent:'#e97551',soft:'#ffddd0',cell:'#fffdfa',line:'#f5d4c6',muted:'#a37466'},forest:{bg:'#eaf1e9',dark:'#235b4a',accent:'#2e8064',soft:'#d7e9db',cell:'#fbfff9',line:'#cbded4',muted:'#648b76'},noir:{bg:'#182039',dark:'#eadfc9',accent:'#d9b97d',soft:'#303a55',cell:'#252d45',line:'#45516d',muted:'#b5c0d3'},minimal:{bg:'#fafafa',dark:'#242c35',accent:'#343d4e',soft:'#e9ecef',cell:'#ffffff',line:'#dcdfe4',muted:'#7c8490'},lavender:{bg:'#f5eeff',dark:'#66428d',accent:'#9366ce',soft:'#e9d9fc',cell:'#fffaff',line:'#e7d5f8',muted:'#a08ab2'}};
+const LIB_KEY='hafteh-negar-library-v2', CURRENT_KEY='hafteh-negar-current-plan-v2', CUSTOM_KEY='hafteh-negar-themes-v2';
+let portableArchive=null;
+try{const data=JSON.parse(document.getElementById('portableArchiveData').textContent||'null');if(data?.format==='hafteh-negar-portable'&&Array.isArray(data.plans))portableArchive=data}catch(e){}
+let customThemes=[];
+try { const fromLocal=JSON.parse(localStorage.getItem(CUSTOM_KEY)||'[]'); const arr=[...(Array.isArray(portableArchive?.themes)?portableArchive.themes:[]),...(Array.isArray(fromLocal)?fromLocal:[])]; if(Array.isArray(arr)){for(const v of arr.slice(0,45)){if(customThemes.some(t=>t.id===v?.id))continue;if(v&&/^user-[a-z0-9-]{3,60}$/.test(v.id)&&v.colors&&Object.values(v.colors).every(z=>/^#[a-f0-9]{6}$/i.test(z))){customThemes.push({id:v.id,label:String(v.label||'قالب اختصاصی').slice(0,32),colors:v.colors});PALETTES[v.id]=v.colors;PRESETS.push([v.id,String(v.label||'قالب اختصاصی').slice(0,32)]);}}}}catch(e){}
+const $=id=>document.getElementById(id), toFa=n=>String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const toEn=s=>String(s).replace(/[۰-۹]/g,x=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(x)).replace(/[٠-٩]/g,x=>'٠١٢٣٤٥٦٧٨٩'.indexOf(x));
+const pad=n=>String(n).padStart(2,'0');
+let exportSequence=0;
+function timestampInfo(now=new Date()){
+ const [y,m,d]=persianParts(new Date(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate(),12)));
+ const clock=`${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+ const date=`${y}/${pad(m)}/${pad(d)}`;
+ return {date,clock,display:`${toFa(date)}، ساعت ${toFa(clock)}`,file:`${y}-${pad(m)}-${pad(d)}_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}-${String(now.getMilliseconds()).padStart(3,'0')}-${++exportSequence}`};
+}
+function exportFileName(format,now=new Date()){return 'Barname-'+timestampInfo(now).file+'.'+format.toLowerCase()}
+
+function iso(d){return `${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())}`}
+function fromIso(s){let d=new Date(String(s)+'T12:00:00Z');return Number.isNaN(d.getTime())?new Date():d}
+function addDay(date,n){let d=new Date(date.getTime());d.setUTCDate(d.getUTCDate()+n);return d}
+function saturday(d){return addDay(d,-((d.getUTCDay()+1)%7))}
+function persianParts(date){let p=new Intl.DateTimeFormat('en-US-u-ca-persian',{timeZone:'UTC',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(date);let n=k=>Number(p.find(x=>x.type===k)?.value||0);return [n('year'),n('month'),n('day')]}
+function persianStr(date,full=false){let [y,m,d]=persianParts(date);return `${toFa(d)} ${MONTHS[m-1]}${full?' '+toFa(y):''}`}
+function jToG(jy,jm,jd){jy+=1595;let days=-355668+365*jy+Math.floor(jy/33)*8+Math.floor(((jy%33)+3)/4)+jd+(jm<7?(jm-1)*31:186+(jm-7)*30);let gy=400*Math.floor(days/146097);days%=146097;if(days>36524){gy+=100*Math.floor(--days/36524);days%=36524;if(days>=365)days++}gy+=4*Math.floor(days/1461);days%=1461;if(days>365){gy+=Math.floor((days-1)/365);days=(days-1)%365}let gd=days+1,monthDays=[31,((gy%4===0&&gy%100!==0)||gy%400===0)?29:28,31,30,31,30,31,31,30,31,30,31];let gm=1;for(const ml of monthDays){if(gd<=ml)break;gd-=ml;gm++}return new Date(Date.UTC(gy,gm-1,gd,12))}
+function def(){let now=new Date(),dt=new Date(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate(),12));return {version:1,title:'برنامه هفتگی من',subtitle:'هر روز، یک قدم نزدیک‌تر به هدف',footer:'تداوم، مهم‌تر از بی‌نقص بودن است.',startDate:iso(saturday(dt)),theme:'ocean',audience:'self',columns:['زیست','فیزیک','شیمی','ریاضی','زمین','عمومی','روتین'].map((name,i)=>({id:'c'+(i+1),name})),cells:{}}}
+function normalize(x){if(!x||typeof x!=='object'||!Array.isArray(x.columns))throw Error('ساختار فایل نامعتبر است');let a=def();a.title=String(x.title||'برنامه هفتگی من').slice(0,90);a.subtitle=String(x.subtitle??'').slice(0,160);a.footer=String(x.footer??'').slice(0,170);a.theme=PALETTES[x.theme]?x.theme:'ocean';a.audience=x.audience==='others'?'others':'self';if(/^\d{4}-\d\d-\d\d$/.test(x.startDate||''))a.startDate=iso(saturday(fromIso(x.startDate)));a.columns=x.columns.slice(0,12).filter(v=>v&&typeof v==='object').map((v,i)=>({id:String(v.id||('c'+i)).slice(0,40),name:String(v.name||'ستون '+(i+1)).slice(0,35)}));if(!a.columns.length)throw Error('جدول باید حداقل یک ستون داشته باشد');a.cells={};for(const day of DAYS){for(const col of a.columns){let k=day+'|'+col.id;if(x.cells&&typeof x.cells[k]==='string')a.cells[k]=x.cells[k].slice(0,2000)}}return a}
+let library=[];
+try{const data=JSON.parse(localStorage.getItem(LIB_KEY)||'[]');if(Array.isArray(data))library=data.filter(e=>e&&typeof e.id==='string'&&e.data&&Array.isArray(e.data.columns)).slice(0,150)}catch(e){}
+if(portableArchive?.plans?.length){const map=new Map();for(const entry of [...library,...portableArchive.plans]){if(!entry?.id||!entry.data||!Array.isArray(entry.data.columns))continue;const old=map.get(entry.id);if(!old||Number(entry.updatedAt||0)>=Number(old.updatedAt||0))map.set(entry.id,entry)}library=[...map.values()].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,150)}
+let archivePersisted=null,archiveMutation=0;
+function updateArchiveStorageStatus(){
+ const el=$('archiveStorageNotice'),msg=$('archiveStorageMessage');if(!el||!msg)return;
+ el.classList.remove('problem','good');
+ if(archivePersisted===false){el.classList.add('problem');msg.textContent='مرورگر اجازه ذخیره دائمی نداد. برنامه فعلاً در همین صفحه دیده می‌شود، ولی با بستن آن ممکن است از بین برود. دکمه «دانلود نسخه همراه با برنامه‌ها» را بزن.';}
+ else if(location.protocol==='file:'){msg.textContent=archivePersisted===true?'برنامه ذخیره شد؛ اما فایل‌های HTML جداگانه ممکن است حافظه مشترک نداشته باشند. برای انتقال یا آپدیت، نسخه همراه با برنامه‌ها را دانلود کن.':'این صفحه به‌صورت فایل باز شده است. برای جلوگیری از گم‌شدن برنامه‌ها بعد از دانلود نسخه جدید، نسخه همراه با آرشیو را ذخیره کن.';}
+ else if(archivePersisted===true){el.classList.add('good');msg.textContent='ثبت آرشیو در حافظه این مرورگر تأیید شد. برنامه‌ها روی این دستگاه می‌مانند؛ برای انتقال به دستگاه دیگر پشتیبان JSON بگیر.';}
+ else msg.textContent='آرشیو به این آدرس وب و همین مرورگر وابسته است. برای امنیت بیشتر از آرشیو پشتیبان JSON بگیر.';
+}
+const uid=()=> 'plan-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
+let currentPlanId;try{currentPlanId=localStorage.getItem(CURRENT_KEY)||uid()}catch(e){currentPlanId=uid()}
+// The previous version only used localStorage. IndexedDB keeps a second durable archive
+// for browsers that disallow localStorage in embedded or local-file contexts.
+// IndexedDB can stall in Android HTML viewers. Never let it hold up a save.
+const openArchiveDB=new Promise(resolve=>{
+ let completed=false;const finish=db=>{if(completed){try{db?.close()}catch(e){};return}completed=true;clearTimeout(timer);resolve(db)};
+ const timer=setTimeout(()=>finish(null),2200);
+ try{if(!('indexedDB' in window)||!indexedDB){finish(null);return}
+  const req=indexedDB.open('hafteh-negar-offline-v4',1);
+  req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('records'))req.result.createObjectStore('records')};
+  req.onsuccess=()=>finish(req.result);req.onerror=()=>finish(null);req.onblocked=()=>finish(null);
+ }catch(e){finish(null)}
+});
+function getArchiveFromDB(db){return new Promise(resolve=>{
+ let finished=false;const timer=setTimeout(()=>{if(!finished){finished=true;resolve([])}},1800);
+ const finish=value=>{if(finished)return;finished=true;clearTimeout(timer);resolve(value)};
+ try{const req=db.transaction('records','readonly').objectStore('records').get('library');req.onsuccess=()=>finish(Array.isArray(req.result)?req.result:[]);req.onerror=()=>finish([])}catch(e){finish([])}
+})}
+function putArchiveInDB(db,items){return new Promise(resolve=>{
+ let finished=false;const timer=setTimeout(()=>{if(!finished){finished=true;resolve(false)}},2100);
+ const finish=value=>{if(finished)return;finished=true;clearTimeout(timer);resolve(value)};
+ try{const tx=db.transaction('records','readwrite');tx.objectStore('records').put(items,'library');tx.oncomplete=()=>finish(true);tx.onerror=()=>finish(false);tx.onabort=()=>finish(false)}catch(e){finish(false)}
+})}
+const libraryReady=(async()=>{
+ const db=await openArchiveDB;if(!db)return;
+ const fromDB=await getArchiveFromDB(db);
+ if(Array.isArray(fromDB)&&fromDB.length&&archiveMutation===0){
+  const map=new Map();for(const item of [...fromDB,...library]){
+   if(!item?.id||!item.data||!Array.isArray(item.data.columns))continue;
+   const old=map.get(item.id);if(!old||Number(item.updatedAt)>=Number(old.updatedAt))map.set(item.id,item)
+  }
+  library=[...map.values()].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,150)
+ }
+ try{if(library.length)localStorage.setItem(LIB_KEY,JSON.stringify(library))}catch(e){}
+ if($('libraryModal')?.classList.contains('open')){renderLibrary();updateArchiveStorageStatus()}
+})();
+async function persistArchive(items){
+ let durable=false;
+ try{const json=JSON.stringify(items);localStorage.setItem(LIB_KEY,json);durable=localStorage.getItem(LIB_KEY)===json}catch(e){}
+ if(durable){archivePersisted=true;updateArchiveStorageStatus();
+  // Replication is best effort, never blocks the UI or the primary save.
+  openArchiveDB.then(db=>{if(db)putArchiveInDB(db,items)});return true;
+ }
+ const db=await openArchiveDB;
+ if(db)durable=await putArchiveInDB(db,items);
+ archivePersisted=durable;updateArchiveStorageStatus();
+ return durable;
+}
+let state;try{const stored=localStorage.getItem(KEY);state=portableArchive?.draft?normalize(portableArchive.draft):stored?normalize(JSON.parse(stored)):def();if(!stored&&!portableArchive?.draft){const found=library.find(x=>x.id===currentPlanId);if(found)state=normalize(found.data)}}catch(err){try{state=portableArchive?.draft?normalize(portableArchive.draft):def()}catch(e){state=def()}};let tab='edit',timer=null,toastTimer=null,selectedLibraryId=null,zoomPercent=100,printRestoreTimer=null;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));localStorage.setItem(CURRENT_KEY,currentPlanId);$('saveStatus').textContent='پیش‌نویس روی دستگاه ذخیره شد'}catch(e){$('saveStatus').textContent='ذخیره پیش‌نویس ممکن نیست';toast('فضای ذخیره‌سازی مرورگر در دسترس نیست؛ از نوشته‌ها پشتیبان بگیر.')}}
+async function saveArchiveAfterExport(snapshot,archiveId,kind){
+ // Update the in-memory archive immediately, even if IndexedDB never opens.
+ archiveMutation++;
+ const data=normalize({...snapshot,audience:kind});
+ const id=archiveId||uid(),now=Date.now(),savedAt=timestampInfo(new Date(now));
+ const item={id,kind,title:data.title||'برنامه بدون عنوان',label:`${data.title||'برنامه'} · ${savedAt.display}`,updatedAt:now,data,exportConfirmed:true};
+ const i=library.findIndex(p=>p.id===id),next=[...library];
+ if(i>=0)next.splice(i,1);
+ next.unshift(item);
+ if(next.length>150){toast('آرشیو پر شده؛ برای ذخیره جدید یک برنامه قدیمی را حذف کن.');return false}
+ library=next;selectedLibraryId=id;
+ const persisted=await persistArchive(next);
+ if(archiveId===currentPlanId){state.audience=kind;document.querySelectorAll('input[name=audience]').forEach(r=>r.checked=r.value===kind);save()}
+ toast(persisted?(i>=0?'برنامه در آرشیو به‌روزرسانی شد.':'برنامه در آرشیو ثبت و ذخیره شد.'):'برنامه فعلاً در آرشیو دیده می‌شود؛ ذخیره دائمی ممکن نیست، نسخه همراه با برنامه‌ها را دانلود کن.');
+ return persisted;
+}
+function scheduleSave(){ $('saveStatus').textContent='در حال ذخیره...';clearTimeout(timer);timer=setTimeout(save,350)}
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3200)}
+function weekDates(plan=state){return DAYS.map((_,i)=>addDay(fromIso(plan.startDate),i))}
+function updateWeek(){let a=weekDates();$('weekLabel').textContent=`${persianStr(a[0])} تا ${persianStr(a[6])}`;let [y,m,d]=persianParts(a[0]);$('pYear').value=y;$('pMonth').value=m;$('pDay').value=d;renderGrid();updatePreview();scheduleSave()}
+function initDates(){for(let y=1395;y<=1420;y++){let op=new Option(toFa(y),y);$('pYear').add(op)}MONTHS.forEach((m,i)=>$('pMonth').add(new Option(m,i+1)));for(let d=1;d<=31;d++)$('pDay').add(new Option(toFa(d),d));for(const id of ['pDay','pMonth','pYear'])$(id).addEventListener('change',()=>{let y=+$('pYear').value,m=+$('pMonth').value,d=+$('pDay').value,g=jToG(y,m,d);if(persianParts(g).join(',')!==[y,m,d].join(',')){toast('این تاریخ شمسی معتبر نیست.');updateWeek();return}let corrected=saturday(g);state.startDate=iso(corrected);if(iso(corrected)!==iso(g))toast('تاریخ شروع به شنبه همان هفته تغییر کرد.');updateWeek()});$('prevWeek').onclick=()=>{state.startDate=iso(addDay(fromIso(state.startDate),-7));updateWeek()};$('nextWeek').onclick=()=>{state.startDate=iso(addDay(fromIso(state.startDate),7));updateWeek()}}
+function renderThemes(){const host=$('themeOptions');host.replaceChildren();for(let [id,label] of PRESETS){let b=document.createElement('button');b.type='button';b.className='theme-choice'+(id===state.theme?' active':'');b.setAttribute('aria-pressed',id===state.theme?'true':'false');let mini=document.createElement('span');mini.className='mini '+(id.startsWith('user-')?'custom':id);if(id.startsWith('user-')){let p=PALETTES[id];mini.style.setProperty('--mini-bg',p.bg);mini.style.setProperty('--mini-accent',p.accent);mini.style.setProperty('--mini-cell',p.cell)}for(let i=0;i<4;i++)mini.appendChild(document.createElement('i'));let t=document.createElement('b');t.textContent=label;b.append(mini,t);b.onclick=()=>{state.theme=id;renderThemes();updatePreview();scheduleSave();toast('قالب «'+label+'» انتخاب شد.')};host.appendChild(b)}$('themeCount').textContent=toFa(PRESETS.length)}
+
+function renderCols(){const host=$('columnsList');host.replaceChildren();for(let col of state.columns){let div=document.createElement('div');div.className='col-item';let inp=document.createElement('input');inp.value=col.name;inp.setAttribute('aria-label','نام ستون '+col.name);inp.maxLength=35;inp.addEventListener('input',()=>{col.name=inp.value;renderGrid();updatePreview();scheduleSave()});let del=document.createElement('button');del.type='button';del.className='delcol';del.title='حذف ستون '+col.name;del.setAttribute('aria-label','حذف ستون '+col.name);del.textContent='×';del.onclick=()=>{if(state.columns.length===1){toast('حداقل یک ستون باید باقی بماند.');return}if(Object.keys(state.cells).some(k=>k.endsWith('|'+col.id)&&state.cells[k]?.trim())&&!confirm('محتوای این ستون هم حذف می‌شود. ادامه می‌دهی؟'))return;state.columns=state.columns.filter(c=>c.id!==col.id);for(let k of Object.keys(state.cells))if(k.endsWith('|'+col.id))delete state.cells[k];renderCols();renderGrid();updatePreview();updateStats();scheduleSave()};div.append(inp,del);host.append(div)}$('addColumn').disabled=state.columns.length>=12;updateStats()}
+function sizeArea(area){area.style.height='128px';let wanted=Math.max(128,area.scrollHeight);area.style.height=Math.min(950,wanted)+'px';area.style.overflowY=wanted>950?'auto':'hidden'}
+function renderGrid(){const host=$('editGrid');host.replaceChildren();let n=state.columns.length;host.style.gridTemplateColumns=`105px repeat(${n}, minmax(112px, 1fr))`;host.style.minWidth=(105+n*112)+'px';let dayH=document.createElement('div');dayH.className='g-head day-head';dayH.textContent='روز / تاریخ';host.append(dayH);for(let c of state.columns){let h=document.createElement('div');h.className='g-head';h.textContent=c.name||'بدون عنوان';host.append(h)}weekDates().forEach((date,i)=>{let day=DAYS[i];let dh=document.createElement('div');dh.className='g-day'+(i===6?' friday':'');let t=document.createElement('strong');t.textContent=day;let dt=document.createElement('span');dt.textContent=persianStr(date);dh.append(t,dt);host.append(dh);for(let col of state.columns){let holder=document.createElement('div');let key=day+'|'+col.id;holder.className='g-cell'+((state.cells[key]||'').trim()?' has-content':'');let a=document.createElement('textarea');a.value=state.cells[key]||'';a.placeholder='اینجا بنویس...';a.maxLength=2000;a.setAttribute('aria-label',`${day}، ${col.name}`);a.addEventListener('input',()=>{state.cells[key]=a.value;sizeArea(a);holder.classList.toggle('has-content',!!a.value.trim());updateStats();if(tab==='preview')updatePreview();scheduleSave()});holder.append(a);host.append(holder);requestAnimationFrame(()=>sizeArea(a))}});updateStats()}
+function updateStats(){const filled=DAYS.reduce((sum,d)=>sum+state.columns.filter(c=>(state.cells[d+'|'+c.id]||'').trim()).length,0),all=DAYS.length*state.columns.length;$('filledCount').textContent=toFa(filled);$('subjectCount').textContent=toFa(state.columns.length);$('progressText').textContent=`${toFa(filled)} از ${toFa(all)} خانه`;$('progressFill').style.width=(100*filled/all)+'%'}
+function makeSheet(plan=state){let dates=weekDates(plan),sheet=document.createElement('article');sheet.className='sheet '+(plan.theme.startsWith('user-')?'custom-theme':plan.theme);if(plan.theme.startsWith('user-')&&PALETTES[plan.theme]){for(const [k,v] of Object.entries({bg:'--sheet-bg',dark:'--sheet-ink',accent:'--sheet-accent',soft:'--sheet-soft',cell:'--sheet-white',line:'--sheet-line',muted:'--sheet-secondary'}))sheet.style.setProperty(v,PALETTES[plan.theme][k]);}let top=document.createElement('div');top.className='sheet-top';let l=document.createElement('div');let kicker=document.createElement('div');kicker.className='sheet-kicker';kicker.textContent='WEEKLY PLANNER · هفته‌نگار';let h=document.createElement('h2');h.className='sheet-h';h.textContent=plan.title||'برنامه هفتگی';let desc=document.createElement('p');desc.className='sheet-description';desc.textContent=plan.subtitle;l.append(kicker,h,desc);let stamp=document.createElement('div');stamp.className='sheet-stamp';stamp.append(document.createTextNode('هفته شروع از'),Object.assign(document.createElement('strong'),{textContent:persianStr(dates[0])}));top.append(l,stamp);sheet.append(top);let sep=document.createElement('div');sep.className='sheet-divider';sheet.append(sep);let wrap=document.createElement('div');wrap.className='sheet-table-wrap';let table=document.createElement('table');table.className='sheet-table';let head=document.createElement('thead'),hr=document.createElement('tr');let dth=document.createElement('th');dth.textContent='روز / تاریخ';dth.style.width='94px';hr.append(dth);for(let c of plan.columns){let th=document.createElement('th');th.textContent=c.name||'ستون';hr.append(th)}head.append(hr);table.append(head);let body=document.createElement('tbody');for(let i=0;i<7;i++){let tr=document.createElement('tr'),day=document.createElement('td');day.className='day-cell';day.textContent=DAYS[i];let small=document.createElement('small');small.textContent=persianStr(dates[i]);day.append(small);tr.append(day);for(let c of plan.columns){let td=document.createElement('td');td.textContent=plan.cells[DAYS[i]+'|'+c.id]||'';tr.append(td)}body.append(tr)}table.append(body);wrap.append(table);sheet.append(wrap);let footer=document.createElement('div');footer.className='sheet-footer';let f=document.createElement('span');f.textContent=plan.footer||' ';let mark=document.createElement('span');mark.className='sheet-signature';mark.textContent='هفته‌نگار ✦';footer.append(f,mark);sheet.append(footer);return sheet}
+function fitPreview(){let p=$('previewFrame'),win=$('previewWindow');if(window.innerWidth<=700){let natural=Math.max(820,140+state.columns.length*105),scale=Math.min(1,win.clientWidth/natural);p.style.width=natural+'px';p.style.minWidth='0';p.style.transform=`scale(${scale})`;win.style.height=Math.ceil(p.scrollHeight*scale)+'px'}else{p.style.width='';p.style.minWidth='';p.style.transform='';win.style.height=''}}
+function updatePreview(){const p=$('previewFrame'),pr=$('printArea');p.replaceChildren(makeSheet());pr.replaceChildren(makeSheet());requestAnimationFrame(fitPreview)}
+function setTab(mode){tab=mode;let edit=mode==='edit';$('editSection').classList.toggle('hidden',!edit);$('previewSection').classList.toggle('hidden',edit);$('editTab').classList.toggle('active',edit);$('previewTab').classList.toggle('active',!edit);$('editTab').setAttribute('aria-pressed',String(edit));$('previewTab').setAttribute('aria-pressed',String(!edit));if(!edit)updatePreview();$('editingHeading').textContent=edit?'جدول برنامه‌ریزی':'خروجی نهایی برنامه'}
+function bindSettings(){for(let [id,key] of [['planTitle','title'],['planSubtitle','subtitle'],['footerNote','footer']]){$(id).value=state[key];$(id).addEventListener('input',e=>{state[key]=e.target.value;updatePreview();scheduleSave()})}$('addColumn').onclick=()=>{if(state.columns.length>=12)return;let c={id:'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:'درس جدید'};state.columns.push(c);renderCols();renderGrid();updatePreview();scheduleSave();toast('ستون جدید اضافه شد. نامش را تغییر بده.')};$('editTab').onclick=()=>setTab('edit');$('previewTab').onclick=()=>setTab('preview');$('goEditor').onclick=()=>{setTab('edit');$('editorAnchor').scrollIntoView({behavior:'smooth',block:'start'})};$('goPreview').onclick=()=>{setTab('preview');$('editorAnchor').scrollIntoView({behavior:'smooth',block:'start'})};$('printPdf').onclick=()=>printPlan(state,currentPlanId);$('resetPlan').onclick=()=>{if(!confirm('برنامه جدید بسازیم؟ پیش‌نویس فعلی جایگزین می‌شود. فقط برنامه‌هایی که بعد از گرفتن خروجی ذخیره کرده‌ای در آرشیو می‌مانند.'))return;clearTimeout(timer);save();state=def();currentPlanId=uid();rebuild();save();toast('پیش‌نویس برنامه جدید آماده شد.')};$('exportJson').onclick=exportAllPlans;$('importJson').onclick=()=>$('importFile').click();$('importFile').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>20_000_000)throw Error('فایل بیش از ۲۰ مگابایت است');await importPrograms(JSON.parse(await file.text()))}catch(err){toast('خطا در خواندن پشتیبان: '+err.message)}finally{e.target.value=''}});$('downloadPng').onclick=()=>downloadPng(state,'downloadPng',currentPlanId)}
+function rebuild(){document.querySelectorAll('input[name=audience]').forEach(r=>r.checked=r.value===state.audience);for(let [id,key] of [['planTitle','title'],['planSubtitle','subtitle'],['footerNote','footer']])$(id).value=state[key];renderThemes();renderCols();updateWeek();setTab(tab)}
+function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000)}
+function round(ctx,x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function paintRound(ctx,x,y,w,h,r,fill,stroke){round(ctx,x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}}
+function font(ctx,weight,size){ctx.font=`${weight} ${size}px "Vazirmatn","Noto Sans Arabic",Tahoma,Arial,sans-serif`}
+function wrapLines(ctx,str,maxWidth,maxLines=999){let out=[];for(let paragraph of String(str??'').replace(/\r/g,'').split('\n')){if(!paragraph.trim()){out.push('');continue}let line='';for(let word of paragraph.trim().split(/\s+/)){let trial=line?line+' '+word:word;if(ctx.measureText(trial).width<=maxWidth){line=trial;continue}if(line){out.push(line);line=''}if(ctx.measureText(word).width<=maxWidth){line=word;continue}let current='';for(let ch of word){if(ctx.measureText(current+ch).width>maxWidth&&current){out.push(current);current=ch}else current+=ch}line=current}out.push(line)}return out.slice(0,maxLines)}
+function drawText(ctx,s,x,y,maxW,maxLines,lineH,color){ctx.fillStyle=color;const lines=wrapLines(ctx,s,maxW,maxLines);for(let i=0;i<lines.length;i++)ctx.fillText(lines[i],x,y+i*lineH);return lines.length}
+async function downloadPng(plan=state,buttonId='downloadPng',archiveId=null){const snapshot=normalize(plan);plan=snapshot;let success=false;let btn=$(buttonId),original=btn.textContent;btn.disabled=true;btn.textContent='در حال ساخت تصویر...';try{if(document.fonts?.ready)await document.fonts.ready;let n=plan.columns.length,W=Math.max(2400,355*n+190),margin=85,bodyWidth=W-margin*2,dayW=170,colW=(bodyWidth-dayW)/n;let c=document.createElement('canvas'),ctx=c.getContext('2d');ctx.direction='rtl';ctx.textAlign='right';let rowHeights=[];font(ctx,550,32);for(let i=0;i<7;i++){let max=0;for(let col of plan.columns){let str=plan.cells[DAYS[i]+'|'+col.id]||'';let l=wrapLines(ctx,str,colW-34).length;max=Math.max(max,l)}rowHeights.push(Math.max(156,Math.min(2100,42+Math.max(1,max)*45)))}let H=430+92+rowHeights.reduce((a,b)=>a+b,0)+140;c.width=W;c.height=H;ctx.direction='rtl';ctx.textAlign='right';let p=PALETTES[plan.theme]||PALETTES.ocean,grad=ctx.createLinearGradient(0,0,W,H);grad.addColorStop(0,p.bg);grad.addColorStop(1,p.soft);ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);ctx.save();ctx.strokeStyle=p.accent;ctx.globalAlpha=.13;ctx.lineWidth=4;ctx.beginPath();ctx.arc(110,60,250,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(W+60,H-60,270,0,Math.PI*2);ctx.stroke();ctx.restore();ctx.fillStyle=p.accent;ctx.fillRect(W-margin-82,155,82,8);font(ctx,900,25);ctx.fillStyle=p.accent;ctx.fillText('WEEKLY PLANNER  •  هفته‌نگار',W-margin,135);font(ctx,900,65);drawText(ctx,plan.title||'برنامه هفتگی',W-margin,240,bodyWidth-350,1,78,p.dark);font(ctx,450,27);drawText(ctx,plan.subtitle||' ',W-margin,302,bodyWidth-340,2,43,p.muted);paintRound(ctx,margin,130,245,104,22,p.cell,p.line);ctx.fillStyle=p.muted;font(ctx,700,23);ctx.fillText('شروع هفته',margin+210,173);ctx.fillStyle=p.accent;font(ctx,900,31);ctx.fillText(persianStr(weekDates(plan)[0]),margin+210,215);let y=385;paintRound(ctx,margin,y,bodyWidth,89,16,p.soft,p.line);font(ctx,900,32);ctx.fillStyle=p.dark;ctx.textAlign='center';ctx.fillText('روز / تاریخ',W-margin-dayW/2,y+56);plan.columns.forEach((col,i)=>{ctx.fillText(col.name||'ستون',W-margin-dayW-colW*(i+.5),y+56,colW-18)});ctx.textAlign='right';y+=93;for(let i=0;i<7;i++){let h=rowHeights[i];paintRound(ctx,margin,y,bodyWidth,h-4,8,p.cell,p.line);paintRound(ctx,W-margin-dayW,y,dayW,h-4,8,p.soft,null);ctx.fillStyle=p.dark;font(ctx,900,32);ctx.textAlign='center';ctx.fillText(DAYS[i],W-margin-dayW/2,y+56);font(ctx,500,26);ctx.fillStyle=p.muted;ctx.fillText(persianStr(weekDates(plan)[i]),W-margin-dayW/2,y+92);ctx.textAlign='right';ctx.strokeStyle=p.line;ctx.lineWidth=2;for(let j=0;j<n;j++){let x=W-margin-dayW-colW*j;ctx.beginPath();ctx.moveTo(x,y+8);ctx.lineTo(x,y+h-12);ctx.stroke();font(ctx,550,32);drawText(ctx,plan.cells[DAYS[i]+'|'+plan.columns[j].id]||'',x-15,y+51,colW-30,80,45,p.dark)}y+=h}ctx.fillStyle=p.muted;font(ctx,600,25);drawText(ctx,plan.footer||' ',W-margin,y+59,bodyWidth-230,2,38,p.muted);font(ctx,900,24);ctx.fillStyle=p.accent;ctx.textAlign='left';ctx.fillText('هفته‌نگار ✦',margin,y+59);let blob=await new Promise(res=>c.toBlob(res,'image/png'));if(!blob)throw Error('ساخت تصویر ممکن نشد');downloadBlob(blob,exportFileName('png'));success=true;toast('تصویر برنامه با کیفیت بالا آماده شد.')}catch(err){console.error(err);toast('مشکل در ساخت تصویر: '+err.message)}finally{btn.disabled=false;btn.textContent=original;if(success)askArchiveAfterExport(snapshot,archiveId,'PNG')}}
+
+function exportAllPlans(){clearTimeout(timer);save();const pack={format:'hafteh-negar-library',version:2,exportedAt:new Date().toISOString(),themes:customThemes,plans:library};downloadBlob(new Blob([JSON.stringify(pack,null,2)],{type:'application/json;charset=utf-8'}),'Peyshteban-'+exportFileName('json'));toast('پشتیبان همه برنامه‌ها و قالب‌ها آماده شد.')}
+function downloadPortableVersion(){
+ // Create a self-contained copy whose archive survives changing browsers/file names.
+ const clone=document.documentElement.cloneNode(true);
+ const payload={format:'hafteh-negar-portable',version:5,exportedAt:new Date().toISOString(),plans:library,themes:customThemes,draft:state};
+ clone.querySelector('#portableArchiveData').textContent=JSON.stringify(payload).replace(/</g,'\\u003c');
+ for(const modal of clone.querySelectorAll('.modal')){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}
+ const body=clone.querySelector('body');body.style.overflow='';
+ const markup='<!doctype html>\n'+clone.outerHTML;
+ downloadBlob(new Blob([markup],{type:'text/html;charset=utf-8'}),'HaftehNegar-Saved-'+timestampInfo().file+'.html');
+ toast('نسخه همراه با تمام برنامه‌ها دانلود شد. برای ادامه کار در آینده همین فایل را باز کن.');
+}
+function downloadArchiveBackup(){const pack={format:'hafteh-negar-library',version:5,exportedAt:new Date().toISOString(),themes:customThemes,plans:library};downloadBlob(new Blob([JSON.stringify(pack,null,2)],{type:'application/json;charset=utf-8'}),'Archive-'+exportFileName('json'));}
+async function importPrograms(input){clearTimeout(timer);save();if(input?.format==='hafteh-negar-library'&&Array.isArray(input.plans)){if(!confirm('برنامه‌های فایل پشتیبان بدون حذف برنامه‌های فعلی به آرشیو اضافه شوند؟'))return;for(const theme of (Array.isArray(input.themes)?input.themes:[]).slice(0,30)){if(customThemes.length>=30)break;if(!/^user-[a-z0-9-]{3,60}$/.test(theme?.id||'')||!theme.colors||!['bg','dark','accent','soft','cell','line','muted'].every(k=>/^#[0-9a-f]{6}$/i.test(theme.colors[k]||'')))continue;const newId='user-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),item={id:newId,label:String(theme.label||'قالب بازیابی‌شده').slice(0,32),colors:theme.colors};customThemes.push(item);PALETTES[newId]=theme.colors;PRESETS.push([newId,item.label]);theme._restoreId=newId;}try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(customThemes))}catch(e){}let added=0;const mapping=new Map((input.themes||[]).filter(t=>t._restoreId).map(t=>[t.id,t._restoreId]));for(const item of input.plans.slice(0,150)){if(library.length>=150)break;try{const data=normalize({...item.data,theme:mapping.get(item.data?.theme)||item.data?.theme});const id=uid();library.push({id,title:data.title,kind:data.audience,updatedAt:Date.now()-added,data});added++}catch(e){}}if(!added){toast('هیچ برنامه معتبری برای بازیابی پیدا نشد.');return}const first=library[library.length-added];state=normalize(first.data);currentPlanId=first.id;rebuild();save();archiveMutation++;if(!(await persistArchive(library))){toast('آرشیو باز شد ولی ذخیره دائمی ممکن نشد؛ فایل پشتیبان را نگه دار.')}else toast(`${toFa(added)} برنامه به آرشیو اضافه شد.`)}else{const parsed=normalize(input);if(!confirm('برنامه فایل به‌عنوان یک پیش‌نویس جدید باز شود؟'))return;currentPlanId=uid();state=parsed;rebuild();save();toast('برنامه به‌عنوان پیش‌نویس بازیابی شد؛ پس از خروجی می‌توانی آن را به آرشیو اضافه کنی.')}}
+/* An exported file and an archived program are separate decisions */
+let pendingArchive=null;
+function askArchiveAfterExport(plan,archiveId,format){
+ const snapshot=normalize(plan);
+ pendingArchive={plan:snapshot,id:archiveId,format};
+ $('exportSavePlanName').textContent=snapshot.title||'برنامه بدون عنوان';
+ $('exportSaveFormat').textContent='خروجی '+format;
+ $('exportSaveDescription').textContent=format==='PDF'
+  ?'فایل PDF افقی دانلود شد. می‌خوای این نسخه هم در برنامه‌های من ثبت بشه؟'
+  :'خروجی تصویر آماده و دانلودش شروع شد. می‌خوای یک نسخه از این برنامه رو در آرشیوت هم ذخیره کنی؟';
+ document.querySelectorAll('input[name=exportAudience]').forEach(r=>r.checked=r.value===snapshot.audience);
+ $('confirmExportSave').textContent=library.some(p=>p.id===archiveId)?'✓ بله، به‌روزرسانی در برنامه‌های من':'✓ بله، ذخیره در برنامه‌های من';
+ showModal('exportSaveModal');
+}
+async function confirmExportArchive(){
+ if(!pendingArchive)return;
+ const btn=$('confirmExportSave');btn.disabled=true;const label=btn.textContent;btn.textContent='در حال ثبت و بررسی ذخیره...';
+ const {plan,id}=pendingArchive,kind=document.querySelector('input[name=exportAudience]:checked')?.value||'self';
+ try{
+  await saveArchiveAfterExport(plan,id,kind);
+  pendingArchive=null;hideModal('exportSaveModal');
+  openLibrary();
+ }catch(err){console.error(err);toast('خطا هنگام ذخیره برنامه: '+err.message)}finally{btn.disabled=false;btn.textContent=label}
+}
+function declineExportArchive(){pendingArchive=null;hideModal('exportSaveModal');toast('فایل دریافت شد و چیزی به آرشیو اضافه نشد.')}
+/* Dialogs and saved programs */
+let lastFocus=null;
+function showModal(id){lastFocus=document.activeElement;const m=$(id);m.classList.add('open');m.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';m.querySelector('.modal-close')?.focus()}
+function hideModal(id){if(id==='exportSaveModal')pendingArchive=null;const m=$(id);m.classList.remove('open');m.setAttribute('aria-hidden','true');if(!document.querySelector('.modal.open'))document.body.style.overflow='';if(lastFocus&&lastFocus.isConnected)lastFocus.focus()}
+/* Browser print settings caused blank half-pages on some devices. This PDF
+   is built directly as one 297 × 210 mm landscape page, not via window.print(). */
+function pdfTextFit(ctx,text,width,height,preferred=35){
+ let lines=[],size=preferred,lineHeight=42;
+ for(const candidate of [preferred,33,30,27,24,21,18]){
+  font(ctx,650,candidate);lines=wrapLines(ctx,text,width,999);
+  size=candidate;lineHeight=Math.round(candidate*1.34);
+  if(lines.length*lineHeight<=height)break;
+ }
+ const allowed=Math.max(1,Math.floor(height/lineHeight));
+ if(lines.length>allowed){lines=lines.slice(0,allowed);let last=lines.length-1;lines[last]=lines[last].replace(/.{1,3}$/u,'…')}
+ return {lines,size,lineHeight};
+}
+function makePdfCanvas(plan){
+ const W=2970,H=2100,margin=84,n=plan.columns.length,c=document.createElement('canvas');
+ c.width=W;c.height=H;const ctx=c.getContext('2d',{alpha:false});ctx.direction='rtl';ctx.textAlign='right';
+ const p=PALETTES[plan.theme]||PALETTES.ocean;
+ const grad=ctx.createLinearGradient(0,0,W,H);grad.addColorStop(0,p.bg);grad.addColorStop(1,p.soft);ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+ ctx.strokeStyle=p.accent;ctx.globalAlpha=.12;ctx.lineWidth=5;ctx.beginPath();ctx.arc(110,80,300,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;
+ ctx.fillStyle=p.accent;ctx.fillRect(W-margin-100,135,100,8);
+ ctx.textAlign='right';font(ctx,850,29);ctx.fillStyle=p.accent;ctx.fillText('WEEKLY PLANNER · هفته‌نگار',W-margin,195);
+ font(ctx,900,76);ctx.fillStyle=p.dark;ctx.fillText(String(plan.title||'برنامه هفتگی').slice(0,55),W-margin,292,W-750);
+ font(ctx,480,35);ctx.fillStyle=p.muted;ctx.fillText(String(plan.subtitle||'').slice(0,95),W-margin,354,W-730);
+ paintRound(ctx,margin,150,440,162,25,p.cell,p.line);
+ ctx.textAlign='right';font(ctx,650,32);ctx.fillStyle=p.muted;ctx.fillText('تاریخ شروع برنامه',margin+402,205);
+ font(ctx,880,43);ctx.fillStyle=p.accent;ctx.fillText(persianStr(weekDates(plan)[0],true),margin+402,271);
+ const startY=430,headH=110,rowH=201,dayW=212,bodyW=W-2*margin,colW=(bodyW-dayW)/n;
+ paintRound(ctx,margin,startY,bodyW,headH,16,p.soft,p.line);
+ ctx.textAlign='center';font(ctx,900,n>9?26:34);ctx.fillStyle=p.dark;
+ ctx.fillText('روز / تاریخ',W-margin-dayW/2,startY+69,dayW-14);
+ plan.columns.forEach((col,i)=>{ctx.fillText(col.name||'درس',W-margin-dayW-colW*(i+.5),startY+69,colW-18)});
+ let y=startY+headH+8;
+ for(let i=0;i<7;i++){
+  const day=DAYS[i];paintRound(ctx,margin,y,bodyW,rowH-5,9,p.cell,p.line);
+  paintRound(ctx,W-margin-dayW,y,dayW,rowH-5,9,p.soft,null);
+  ctx.textAlign='center';font(ctx,900,38);ctx.fillStyle=p.dark;ctx.fillText(day,W-margin-dayW/2,y+68);
+  font(ctx,550,29);ctx.fillStyle=p.muted;ctx.fillText(persianStr(weekDates(plan)[i]),W-margin-dayW/2,y+117);
+  ctx.strokeStyle=p.line;ctx.lineWidth=2;ctx.textAlign='right';
+  for(let j=0;j<n;j++){
+   const x=W-margin-dayW-colW*j;
+   ctx.beginPath();ctx.moveTo(x,y+8);ctx.lineTo(x,y+rowH-14);ctx.stroke();
+   let value=plan.cells[day+'|'+plan.columns[j].id]||'';
+   if(!value.trim())continue;
+   const txt=pdfTextFit(ctx,value,colW-32,rowH-28,n>=10?29:36);
+   font(ctx,650,txt.size);ctx.fillStyle=p.dark;
+   txt.lines.forEach((line,k)=>ctx.fillText(line,x-15,y+24+txt.size+k*txt.lineHeight,colW-32));
+  }
+  y+=rowH;
+ }
+ ctx.fillStyle=p.muted;font(ctx,550,29);ctx.textAlign='right';ctx.fillText(String(plan.footer||'').slice(0,120),W-margin,2055,W-560);
+ ctx.fillStyle=p.accent;font(ctx,900,29);ctx.textAlign='left';ctx.fillText('هفته‌نگار ✦',margin,2055);
+ return c;
+}
+function jpegToOnePageA4Pdf(jpg,iw,ih){
+ // Minimal standards-compliant PDF with one full-bleed JPEG image.
+ const encoder=new TextEncoder(),parts=[];let pos=0;const offsets=[0];
+ const add=x=>{const arr=typeof x==='string'?encoder.encode(x):x;parts.push(arr);pos+=arr.length};
+ const obj=(i,s)=>{offsets[i]=pos;add(`${i} 0 obj\n${s}\nendobj\n`)};
+ add('%PDF-1.4\n%');add(new Uint8Array([0xe2,0xe3,0xcf,0xd3]));add('\n');
+ obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+ obj(2,'<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+ obj(3,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 841.89 595.28] /Resources << /ProcSet [/PDF /ImageC] /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>');
+ offsets[4]=pos;add(`4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${iw} /Height ${ih} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpg.length} >>\nstream\n`);add(jpg);add('\nendstream\nendobj\n');
+ const commands='q\n841.89 0 0 595.28 0 0 cm\n/Im0 Do\nQ\n';
+ obj(5,`<< /Length ${encoder.encode(commands).length} >>\nstream\n${commands}endstream`);
+ const xref=pos;add('xref\n0 6\n0000000000 65535 f \n');for(let i=1;i<=5;i++)add(String(offsets[i]).padStart(10,'0')+' 00000 n \n');
+ add(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+ return new Blob(parts,{type:'application/pdf'});
+}
+let pdfExportRunning=false;
+async function printPlan(plan=state,archiveId=null){
+ if(pdfExportRunning)return;
+ const snapshot=normalize(plan),id=archiveId,button=id&&id!==currentPlanId?'libraryPdf':'printPdf';
+ const btn=$(button),old=btn?.textContent;pdfExportRunning=true;if(btn){btn.disabled=true;btn.textContent='در حال ساخت PDF...'}
+ try{
+  if(document.fonts?.ready)await document.fonts.ready;
+  const canvas=makePdfCanvas(snapshot);
+  const jpeg=await new Promise((res,rej)=>canvas.toBlob(blob=>blob?res(blob):rej(new Error('رندر تصویر ناموفق بود')),'image/jpeg',.95));
+  const pdf=jpegToOnePageA4Pdf(new Uint8Array(await jpeg.arrayBuffer()),canvas.width,canvas.height);
+  downloadBlob(pdf,exportFileName('pdf'));
+  toast('PDF در قالب یک صفحه A4 افقی و تمام‌صفحه دریافت شد.');
+  // Must finish the download before opening the question dialog.
+  askArchiveAfterExport(snapshot,id,'PDF');
+ }catch(e){console.error(e);toast('خطا در ساخت PDF: '+e.message)}
+ finally{pdfExportRunning=false;if(btn){btn.disabled=false;btn.textContent=old}}
+}
+function currentItem(){return library.find(p=>p.id===selectedLibraryId)}
+function archiveItemUI(item){const btn=document.createElement('button');btn.className='saved-program'+(item.id===selectedLibraryId?' active':'');const a=document.createElement('span');const title=document.createElement('strong');title.textContent=item.label||(item.title||'بدون عنوان')+' · '+(item.updatedAt?timestampInfo(new Date(item.updatedAt)).display:'');const small=document.createElement('small');let date=new Date(item.updatedAt||Date.now());small.textContent=Number.isNaN(date.getTime())?'':`${item.exportConfirmed?'ثبت خروجی':'آرشیو نسخه قبل'}: ${persianStr(new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate(),12)),true)}`;a.append(title,small);btn.append(a,document.createTextNode('◂'));btn.onclick=()=>{selectedLibraryId=item.id;zoomPercent=100;$('zoomRange').value=100;renderLibrary()};return btn}
+function renderLibrary(){for(const [kind,id,countId] of [['self','selfPlans','selfCount'],['others','otherPlans','othersCount']]){const host=$(id);host.replaceChildren();const group=library.filter(p=>(p.kind==='others'?'others':'self')===kind).sort((a,b)=>b.updatedAt-a.updatedAt);$(countId).textContent=toFa(group.length);if(!group.length){const empty=document.createElement('div');empty.className='library-empty';empty.textContent=kind==='self'?'بعد از خروجی و تأیید ذخیره، برنامه‌های خودت اینجا دیده می‌شن.':'برنامه‌های دیگران بعد از خروجی و تأیید ذخیره، اینجا دیده می‌شن.';host.append(empty)}else group.forEach(p=>host.append(archiveItemUI(p)))}let item=currentItem(),no=!item;for(const id of ['libraryPng','libraryPdf','libraryOpen','libraryDelete','zoomOut','zoomIn','zoomRange'])$(id).disabled=no;$('selectedPlanTitle').textContent=item?.label||item?.title||'یک برنامه از دو ستون انتخاب کن';$('selectedPlanMeta').textContent=item?(item.kind==='others'?'برای دیگران':'برای خودم')+' • '+persianStr(fromIso(item.data.startDate),true):'برای مشاهده پیش‌نمایش، روی عنوان برنامه بزن.';$('libraryPreviewSheet').replaceChildren(...(item?[makeSheet(normalize(item.data))]:[]));requestAnimationFrame(scaleLibraryPreview)}
+function scaleLibraryPreview(){const el=$('libraryPreviewSheet'),size=$('libraryPreviewSize'),viewport=$('libraryViewport');if(!el.firstChild){size.style.height='90px';return}const natural=980,base=Math.min(1,Math.max(.15,(viewport.clientWidth-24)/natural)),scale=base*(zoomPercent/100);el.style.transform=`scale(${scale})`;size.style.width=Math.ceil(natural*scale)+'px';size.style.height=Math.ceil(el.scrollHeight*scale)+'px';$('zoomLabel').textContent=toFa(zoomPercent)+'٪'}
+function openLibrary(){clearTimeout(timer);save();if(!library.some(p=>p.id===selectedLibraryId))selectedLibraryId=library[0]?.id||null;renderLibrary();updateArchiveStorageStatus();showModal('libraryModal');requestAnimationFrame(scaleLibraryPreview)}
+function openSaved(){let item=currentItem();if(!item)return;clearTimeout(timer);save();state=normalize(item.data);currentPlanId=item.id;hideModal('libraryModal');rebuild();save();setTab('edit');$('editorAnchor').scrollIntoView({behavior:'smooth',block:'start'});toast('نسخه ویرایشی باز شد؛ تغییرات فقط بعد از خروجی و تأیید، در آرشیو اعمال می‌شوند.')}
+async function deleteSaved(){
+ let item=currentItem();if(!item)return;
+ if(!confirm('برنامه «'+item.title+'» از آرشیو حذف شود؟'))return;
+ await libraryReady;archiveMutation++;const next=library.filter(p=>p.id!==item.id);
+ if(!(await persistArchive(next))){toast('حذف دائمی ممکن نشد؛ فضای ذخیره‌سازی مرورگر را بررسی کن.');return}
+ library=next;if(currentPlanId===item.id){currentPlanId=uid();save()}
+ selectedLibraryId=library[0]?.id||null;renderLibrary();toast('برنامه از آرشیو حذف شد.');
+}
+/* Custom colors are tokens, never arbitrary CSS, so exported layout stays compatible */
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+function rgb(h){return [1,3,5].map(i=>parseInt(h.slice(i,i+2),16))}
+function hex(c){return '#'+c.map(n=>Math.round(clamp(n,0,255)).toString(16).padStart(2,'0')).join('')}
+function blend(a,b,t){let x=rgb(a),y=rgb(b);return hex(x.map((v,i)=>v*(1-t)+y[i]*t))}
+function luminance(c){let v=rgb(c).map(x=>x/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return .2126*v[0]+.7152*v[1]+.0722*v[2]}
+function contrast(a,b){let x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+function ensureContrast(color,bg,ratio=4.6){let to=luminance(bg)>.40?'#0c1832':'#ffffff',found=color;for(let i=0;i<=20;i++){if(contrast(found,bg)>=ratio)return found;found=blend(color,to,(i+1)/20)}return to}
+function derivedPalette(accent,bg,ink){let isDark=luminance(bg)<.22,cell=blend(bg,isDark?'#ffffff':'#ffffff',isDark?.075:.73),soft=blend(bg,accent,isDark?.17:.12);let dark=ensureContrast(ink,cell,5),accentChecked=ensureContrast(accent,soft,3.1),muted=ensureContrast(blend(dark,bg,.38),cell,4.5);return {bg,dark,accent:accentChecked,soft,cell,line:blend(cell,dark,isDark?.25:.17),muted}}
+function previewNewTheme(){const p=derivedPalette($('customThemeAccent').value,$('customThemeBg').value,$('customThemeInk').value),demo=def();demo.theme='__designer';demo.title='پیش‌نمایش قالب اختصاصی';demo.subtitle='رنگ‌ها تغییر می‌کنند، جدول ثابت می‌ماند.';demo.cells['شنبه|c1']='مطالعه فصل اول\n۲۰ تست';demo.cells['دوشنبه|c3']='مرور و جمع‌بندی';PALETTES.__designer=p;const el=makeSheet(demo);el.classList.add('custom-theme');for(let [key,cssVar] of Object.entries({bg:'--sheet-bg',dark:'--sheet-ink',accent:'--sheet-accent',soft:'--sheet-soft',cell:'--sheet-white',line:'--sheet-line',muted:'--sheet-secondary'}))el.style.setProperty(cssVar,p[key]);$('customThemePreview').replaceChildren(el);$('themeContrastNote')?.remove()}
+function saveNewTheme(){let title=$('customThemeName').value.trim().slice(0,32);if(!title){toast('نام قالب را وارد کن.');$('customThemeName').focus();return}if(customThemes.length>=30){toast('حداکثر ۳۰ قالب اختصاصی می‌توان ساخت.');return}let colors=derivedPalette($('customThemeAccent').value,$('customThemeBg').value,$('customThemeInk').value);let id='user-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),item={id,label:title,colors};customThemes.push(item);PALETTES[id]=colors;PRESETS.push([id,title]);try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(customThemes))}catch(e){toast('قالب فقط تا زمان بسته‌شدن این صفحه در دسترس است.')}state.theme=id;renderThemes();updatePreview();scheduleSave();hideModal('themeModal');toast('قالب سازگار «'+title+'» اضافه شد.')}
+/* Persian calendar: locally embedded selected recurring dates plus optionally fetched per-year event data. */
+const FALLBACK_OCCASIONS={
+'01-01':['جشن نوروز / آغاز سال نو'],'01-02':['عید نوروز'],'01-03':['عید نوروز'],'01-04':['عید نوروز'],'01-12':['روز جمهوری اسلامی ایران'],'01-13':['روز طبیعت'],'02-01':['روز بزرگداشت سعدی'],'02-12':['روز معلم'],'02-25':['روز بزرگداشت فردوسی'],'03-03':['فتح خرمشهر'],'03-14':['سالگرد رحلت امام خمینی'],'03-15':['قیام ۱۵ خرداد'],'04-07':['روز قوه قضاییه'],'04-10':['روز صنعت و معدن'],'05-08':['روز بزرگداشت شیخ شهاب‌الدین سهروردی'],'05-17':['روز خبرنگار'],'06-01':['روز پزشک'],'06-04':['روز کارمند'],'06-13':['روز بزرگداشت ابوریحان بیرونی'],'06-27':['روز شعر و ادب فارسی'],'07-07':['روز آتش‌نشانی و ایمنی'],'07-13':['روز نیروی انتظامی'],'07-20':['روز بزرگداشت حافظ'],'08-13':['روز دانش‌آموز'],'08-24':['روز کتاب و کتابخوانی'],'09-16':['روز دانشجو'],'09-30':['شب یلدا'],'10-20':['سالروز شهادت امیرکبیر'],'11-12':['سالروز بازگشت امام خمینی به ایران'],'11-22':['پیروزی انقلاب اسلامی'],'12-05':['روز مهندس'],'12-15':['روز درختکاری'],'12-29':['روز ملی شدن صنعت نفت']};
+const FALLBACK_1405={
+'01-01':['عید سعید فطر'],'01-02':['تعطیل به مناسبت عید فطر'],'01-25':['شهادت امام جعفر صادق (ع)'],
+'03-06':['عید سعید قربان'],'03-14':['عید سعید غدیر خم','رحلت امام خمینی'],'03-15':['قیام ۱۵ خرداد'],
+'04-03':['تاسوعای حسینی'],'04-04':['عاشورای حسینی'],
+'05-13':['اربعین حسینی'],'05-21':['رحلت پیامبر اکرم (ص)','شهادت امام حسن مجتبی (ع)'],'05-22':['شهادت امام رضا (ع)'],'05-30':['شهادت امام حسن عسکری (ع)'],
+'06-08':['میلاد پیامبر اکرم (ص)','میلاد امام جعفر صادق (ع)'],'08-22':['شهادت حضرت فاطمه زهرا (س)'],
+'10-02':['ولادت امام علی (ع)','روز پدر'],'10-16':['مبعث پیامبر اکرم (ص)'],
+'11-04':['ولادت حضرت قائم (عج)'],'11-22':['پیروزی انقلاب اسلامی'],
+'12-09':['شهادت امام علی (ع)'],'12-19':['عید سعید فطر'],'12-20':['تعطیل عید فطر'],'12-29':['ملی شدن صنعت نفت']};
+const VERIFIED_1405_HOLIDAYS=new Set(['01-01','01-02','01-03','01-04','01-12','01-13','01-25','03-06','03-14','03-15','04-03','04-04','05-13','05-21','05-22','05-30','06-08','08-22','10-02','10-16','11-04','11-22','12-09','12-19','12-20','12-29']);
+const calendarCache=new Map();let calendarYM=null,calendarSelected=null,calendarLoading=new Set();
+function dateKey(y,m,d){return `${y}-${pad(m)}-${pad(d)}`}
+function eventInfo(y,m,d){const key=dateKey(y,m,d),datePart=`${pad(m)}-${pad(d)}`,online=calendarCache.get(y)?.get(key),weeklyHoliday=jToG(y,m,d).getUTCDay()===5;const fixed=FALLBACK_OCCASIONS[datePart]||[],special=y===1405?(FALLBACK_1405[datePart]||[]):[];
+let extra=online?.events||[];if(y===1405){const conflicts=['عید قربان','عید سعید قربان','تاسوعای حسینی','عاشورای حسینی'];extra=extra.filter(e=>!conflicts.some(term=>e.includes(term))||special.some(correct=>correct.includes(term)))}
+let events=[...new Set([...fixed,...special,...extra])];let holiday=y===1405?(VERIFIED_1405_HOLIDAYS.has(datePart)||weeklyHoliday):online?online.holiday:weeklyHoliday||(m===1&&[1,2,3,4,12,13].includes(d))||(m===3&&[14,15].includes(d))||(m===11&&d===22);return {events,holiday}}
+async function fetchCalendarYear(y){if(calendarCache.has(y)||calendarLoading.has(y))return;calendarLoading.add(y);$('calSourceState').textContent='دریافت مناسبت‌های سال '+toFa(y)+'...';let ok=false;for(const base of ['https://raw.githubusercontent.com/alirezadesh/jalali_calendar/main/','https://cdn.jsdelivr.net/gh/alirezadesh/jalali_calendar@main/']){try{const response=await fetch(base+y+'_data.json',{signal:AbortSignal.timeout(7000)});if(!response.ok)continue;const data=await response.json();if(!Array.isArray(data))continue;const map=new Map();for(const row of data){if(!/^\d{4}-\d{2}-\d{2}$/.test(row.date||''))continue;const unique=new Set(),events=[];for(const ev of Array.isArray(row.events)?row.events:[]){const val=String(ev.description||'').trim();if(val&&val!=='جمعه'&&!unique.has(val)){unique.add(val);events.push(val)}}map.set(row.date,{events,holiday:!!row.is_holiday})}if(map.size<300)continue;calendarCache.set(y,map);ok=true;break}catch(e){}}calendarLoading.delete(y);if(calendarYM?.y===y){$('calSourceState').textContent=ok?'مناسبت‌های بارگذاری‌شدهٔ سال '+toFa(y):'حالت آفلاین: مناسبت‌های منتخب';renderCalendar()}}
+function safeMonthLength(y,m){let last=31;while(last>=28){const d=jToG(y,m,last),parts=persianParts(d);if(parts[0]===y&&parts[1]===m&&parts[2]===last)return last;last--}return 29}
+function calendarGo(offset){let {y,m}=calendarYM;let base=y*12+(m-1)+offset;calendarYM={y:Math.floor(base/12),m:((base%12)+12)%12+1};calendarSelected=null;renderCalendar();fetchCalendarYear(calendarYM.y)}
+function openCalendar(){const today=new Date(),p=persianParts(new Date(Date.UTC(today.getFullYear(),today.getMonth(),today.getDate(),12)));calendarYM={y:p[0],m:p[1]};calendarSelected={y:p[0],m:p[1],d:p[2]};renderCalendar();showModal('calendarModal');fetchCalendarYear(p[0])}
+function renderCalendar(){if(!calendarYM)return;const {y,m}=calendarYM;const days=safeMonthLength(y,m);$('calMonthLabel').textContent=MONTHS[m-1]+' '+toFa(y);$('calSourceState').textContent=calendarCache.has(y)?'مناسبت‌های بارگذاری‌شدهٔ سال '+toFa(y):calendarLoading.has(y)?'در حال دریافت مناسبت‌ها':'مناسبت‌های منتخب آفلاین';const grid=$('calendarGrid');grid.replaceChildren();DAYS.forEach(day=>{let v=document.createElement('div');v.className='calendar-weekday';v.textContent=day;grid.append(v)});const first=(jToG(y,m,1).getUTCDay()+1)%7;for(let i=0;i<first;i++){let el=document.createElement('div');el.className='calendar-day empty';grid.append(el)}const today=new Date(),todayParts=persianParts(new Date(Date.UTC(today.getFullYear(),today.getMonth(),today.getDate(),12)));for(let d=1;d<=days;d++){let data=eventInfo(y,m,d),b=document.createElement('button');b.type='button';b.className='calendar-day'+(data.holiday?' holiday':'')+(calendarSelected?.y===y&&calendarSelected.m===m&&calendarSelected.d===d?' selected':'')+(todayParts.join('-')===[y,m,d].join('-')?' today':'');let strong=document.createElement('strong');strong.textContent=toFa(d);let sm=document.createElement('small');sm.textContent=data.events[0]||' ';b.append(strong,sm);b.setAttribute('aria-label',`${toFa(d)} ${MONTHS[m-1]}: ${data.events.join('، ')||'بدون مناسبت ثبت‌شده'}`);b.onclick=()=>{calendarSelected={y,m,d};renderCalendar()};grid.append(b)};renderCalendarDetails()}
+function renderCalendarDetails(){let el=$('calendarDetail');el.replaceChildren();if(!calendarSelected){el.textContent='برای مشاهده مناسبت‌ها روی روز دلخواه بزن.';return}let {y,m,d}=calendarSelected,{events,holiday}=eventInfo(y,m,d);const title=document.createElement('strong');title.textContent=`${toFa(d)} ${MONTHS[m-1]} ${toFa(y)}`;el.append(title);if(holiday){let badge=document.createElement('span');badge.className='holiday-label';badge.textContent='  •  تعطیل';el.append(badge)}let ul=document.createElement('ul');(events.length?events:['برای این روز مناسبتی در داده‌های موجود ثبت نشده است.']).forEach(e=>{let li=document.createElement('li');li.textContent=e;ul.append(li)});el.append(ul);let b=document.createElement('button');b.className='btn btn-primary';b.textContent='شروع برنامه از هفته این روز';b.onclick=()=>{state.startDate=iso(saturday(jToG(y,m,d)));updateWeek();hideModal('calendarModal');toast('هفته انتخابی روی برنامه اعمال شد.')};el.append(b)}
+function initExtras(){$('downloadPortableHtml').onclick=downloadPortableVersion;$('downloadArchiveJson').onclick=downloadArchiveBackup;$('importArchiveFromLibrary').onclick=()=>$('importFile').click();$('confirmExportSave').onclick=confirmExportArchive;$('declineExportSave').onclick=declineExportArchive;for(const b of document.querySelectorAll('[data-close]'))b.addEventListener('click',()=>hideModal(b.getAttribute('data-close')));document.addEventListener('keydown',e=>{if(e.key==='Escape'){const modal=document.querySelector('.modal.open');if(modal)hideModal(modal.id)}});document.querySelectorAll('input[name=audience]').forEach(r=>r.addEventListener('change',()=>{if(!r.checked)return;state.audience=r.value;scheduleSave();toast('دسته‌بندی برنامه تغییر کرد.')}));$('calendarButton').onclick=openCalendar;$('libraryButton').onclick=openLibrary;$('addNewTheme').onclick=()=>{previewNewTheme();showModal('themeModal')};$('createTheme').onclick=saveNewTheme;for(const id of ['customThemeAccent','customThemeBg','customThemeInk'])$(id).addEventListener('input',previewNewTheme);$('calPrev').onclick=()=>calendarGo(-1);$('calNext').onclick=()=>calendarGo(1);$('calToday').onclick=()=>{const d=new Date(),p=persianParts(new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(),12)));calendarYM={y:p[0],m:p[1]};calendarSelected={y:p[0],m:p[1],d:p[2]};renderCalendar();fetchCalendarYear(p[0])};$('zoomIn').onclick=()=>setZoom(zoomPercent+10);$('zoomOut').onclick=()=>setZoom(zoomPercent-10);$('zoomRange').oninput=e=>setZoom(+e.target.value);$('libraryOpen').onclick=openSaved;$('libraryDelete').onclick=deleteSaved;$('libraryPng').onclick=()=>{const item=currentItem();if(item)downloadPng(normalize(item.data),'libraryPng',item.id)};$('libraryPdf').onclick=()=>{const item=currentItem();if(item)printPlan(normalize(item.data),item.id)};window.addEventListener('resize',()=>{if($('libraryModal').classList.contains('open'))scaleLibraryPreview()});}
+function setZoom(n){zoomPercent=clamp(n,50,200);$('zoomRange').value=zoomPercent;scaleLibraryPreview()}
+
+window.addEventListener('resize',()=>requestAnimationFrame(fitPreview));initDates();bindSettings();initExtras();rebuild();save();
+})();
+</script>
+
+<style>
+#installPwaButton{border:1px solid #c9d8fc;background:#f0f5ff;color:#2446aa;font-weight:800}
+#installPwaButton:hover{background:#e2edff}
+#networkStatus.offline{color:#a34527;background:#fff3ed}
+.pwa-instructions{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:#09132aaa;padding:20px;direction:rtl}
+.pwa-instructions.show{display:flex}
+.pwa-help-card{background:#fff;box-shadow:0 18px 60px #00112226;border-radius:22px;padding:22px;max-width:440px;width:100%;line-height:2;color:#14203c}
+.pwa-help-card h3{margin:0 0 8px;font-size:22px}.pwa-help-card p{font-size:15px;margin:0 0 14px}
+.pwa-help-card button{border:0;border-radius:12px;background:#4356dd;color:white;padding:10px 22px;font-weight:700}
+</style>
+<div id="pwaHelp" class="pwa-instructions" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pwaHelpTitle">
+  <div class="pwa-help-card"><h3 id="pwaHelpTitle">نصب هفته‌نگار روی گوشی</h3>
+    <p id="pwaHelpText">در منوی مرورگر، گزینه «Add to Home screen / افزودن به صفحه اصلی» یا «Install app / نصب برنامه» را انتخاب کن.</p>
+    <button id="pwaHelpClose" type="button">متوجه شدم</button>
+  </div>
+</div>
+<script>
+(()=>{
+ 'use strict';
+ let installPrompt=null;
+ const btn=document.getElementById('installPwaButton');
+ const help=document.getElementById('pwaHelp');
+ const status=document.getElementById('networkStatus');
+ const refreshOnline=()=>{status.textContent=navigator.onLine?'آماده برای استفاده آفلاین':'حالت آفلاین';status.classList.toggle('offline',!navigator.onLine)};
+ window.addEventListener('online',refreshOnline);window.addEventListener('offline',refreshOnline);refreshOnline();
+ window.addEventListener('beforeinstallprompt', e=>{e.preventDefault();installPrompt=e;btn.textContent='＋ نصب هفته‌نگار';});
+ window.addEventListener('appinstalled',()=>{installPrompt=null;btn.textContent='✓ وب‌اپ نصب شد';btn.disabled=true;});
+ if(window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone){btn.textContent='✓ وب‌اپ نصب است';btn.disabled=true}
+ function closeHelp(){help.classList.remove('show');help.setAttribute('aria-hidden','true')}
+ document.getElementById('pwaHelpClose').addEventListener('click',closeHelp);
+ help.addEventListener('click', e=>{if(e.target===help)closeHelp()});
+ btn.addEventListener('click',async()=>{
+  if(installPrompt){const p=installPrompt;installPrompt=null;await p.prompt();const result=await p.userChoice.catch(()=>null);if(result?.outcome==='accepted'){btn.textContent='✓ نصب شد';btn.disabled=true}return}
+  const ios=/iPad|iPhone|iPod/.test(navigator.userAgent);
+  document.getElementById('pwaHelpText').textContent=ios?
+    'در Safari روی دکمه Share / اشتراک‌گذاری بزن، سپس Add to Home Screen / افزودن به صفحه اصلی را انتخاب کن.':
+    'در منوی مرورگر، گزینه «Install app / نصب برنامه» یا «Add to Home screen / افزودن به صفحه اصلی» را انتخاب کن. استفاده از HTTPS و مرورگر اصلی گوشی الزامی است.';
+  help.classList.add('show');help.setAttribute('aria-hidden','false');
+ });
+ if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')){
+   window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(e=>console.warn('PWA offline cache',e)));
+ }
+})();
+</script>
+</body>
+</html>
