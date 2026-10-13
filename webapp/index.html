@@ -284,6 +284,7 @@ function updateArchiveStorageStatus(){
  else if(archivePersisted===true){el.classList.add('good');msg.textContent='ثبت آرشیو در حافظه این مرورگر تأیید شد. برنامه‌ها روی این دستگاه می‌مانند؛ برای انتقال به دستگاه دیگر پشتیبان JSON بگیر.';}
  else msg.textContent='آرشیو به این آدرس وب و همین مرورگر وابسته است. برای امنیت بیشتر از آرشیو پشتیبان JSON بگیر.';
 }
+const ARCHIVE_REV_KEY='barname-archive-authoritative-v3';
 const uid=()=> 'plan-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
 let currentPlanId;try{currentPlanId=localStorage.getItem(CURRENT_KEY)||uid()}catch(e){currentPlanId=uid()}
 // The previous version only used localStorage. IndexedDB keeps a second durable archive
@@ -309,32 +310,47 @@ function putArchiveInDB(db,items){return new Promise(resolve=>{
  try{const tx=db.transaction('records','readwrite');tx.objectStore('records').put(items,'library');tx.oncomplete=()=>finish(true);tx.onerror=()=>finish(false);tx.onabort=()=>finish(false)}catch(e){finish(false)}
 })}
 const libraryReady=(async()=>{
- const db=await openArchiveDB;if(!db)return;
- const fromDB=await getArchiveFromDB(db);
- if(Array.isArray(fromDB)&&fromDB.length&&archiveMutation===0){
-  const map=new Map();for(const item of [...fromDB,...library]){
-   if(!item?.id||!item.data||!Array.isArray(item.data.columns))continue;
-   const old=map.get(item.id);if(!old||Number(item.updatedAt)>=Number(old.updatedAt))map.set(item.id,item)
+  const db=await openArchiveDB;
+  let hasRevision=false;
+  try{hasRevision=Boolean(localStorage.getItem(ARCHIVE_REV_KEY))}catch(e){}
+  if(!hasRevision && archiveMutation===0 && db){
+   // First migration only: merge historical stores. Afterwards the version marker
+   // prevents removed records from coming back via a stale legacy mirror.
+   const old=await getArchiveFromDB(db), map=new Map();
+   for(const item of [...(Array.isArray(old)?old:[]),...library]){
+    if(!item?.id||!item.data||!Array.isArray(item.data.columns))continue;
+    const previous=map.get(item.id);
+    if(!previous || Number(item.updatedAt||0)>=Number(previous.updatedAt||0))map.set(item.id,item);
+   }
+   library=[...map.values()].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,150);
   }
-  library=[...map.values()].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,150)
- }
- try{if(library.length)localStorage.setItem(LIB_KEY,JSON.stringify(library))}catch(e){}
- if($('libraryModal')?.classList.contains('open')){renderLibrary();updateArchiveStorageStatus()}
+  if($('libraryModal')?.classList.contains('open')){renderLibrary();updateArchiveStorageStatus()}
 })();
+let archiveWriteChain=Promise.resolve();
 async function persistArchive(items){
- let durable=false;
- try{const json=JSON.stringify(items);localStorage.setItem(LIB_KEY,json);durable=localStorage.getItem(LIB_KEY)===json}catch(e){}
- if(durable){archivePersisted=true;updateArchiveStorageStatus();
-  // Replication is best effort, never blocks the UI or the primary save.
-  openArchiveDB.then(db=>{if(db)putArchiveInDB(db,items)});if(studioInitComplete)studioWriteIDB('library',items);return true;
- }
- const db=await openArchiveDB;
- if(db)durable=await putArchiveInDB(db,items);
- archivePersisted=durable;updateArchiveStorageStatus();if(durable&&studioInitComplete)studioWriteIDB('library',items);
- return durable;
+ const snapshot=JSON.parse(JSON.stringify(items));
+ // Serialize all writes, including mirror writes; never acknowledge a pending write.
+ const task=archiveWriteChain.catch(()=>{}).then(async()=>{
+  let localOk=false,idbOk=false,legacyOk=false;
+  try{
+   const json=JSON.stringify(snapshot);
+   localStorage.setItem(LIB_KEY,json);
+   localOk=localStorage.getItem(LIB_KEY)===json;
+   if(localOk)localStorage.setItem(ARCHIVE_REV_KEY,JSON.stringify({at:Date.now(),count:snapshot.length}));
+  }catch(e){}
+  // If local storage fails, IndexedDB may still be available.
+  const db=await openArchiveDB;
+  if(db)legacyOk=await putArchiveInDB(db,snapshot);
+  if(studioInitComplete)idbOk=await studioWriteIDB('library',snapshot);
+  const durable=localOk||idbOk||legacyOk;
+  archivePersisted=durable;updateArchiveStorageStatus();
+  return durable;
+ });
+ archiveWriteChain=task.catch(()=>false);
+ return task;
 }
 let studioHadLocalDraft=false;let state;try{const stored=localStorage.getItem(KEY);studioHadLocalDraft=!!stored;state=portableArchive?.draft?normalize(portableArchive.draft):stored?normalize(JSON.parse(stored)):def();if(!stored&&!portableArchive?.draft){const found=library.find(x=>x.id===currentPlanId);if(found)state=normalize(found.data)}}catch(err){try{state=portableArchive?.draft?normalize(portableArchive.draft):def()}catch(e){state=def()}};let tab='edit',timer=null,toastTimer=null,selectedLibraryId=null,zoomPercent=100,printRestoreTimer=null;
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));localStorage.setItem(CURRENT_KEY,currentPlanId);$('saveStatus').textContent='پیش‌نویس روی دستگاه ذخیره شد'}catch(e){$('saveStatus').textContent='ذخیره پیش‌نویس ممکن نیست';toast('فضای ذخیره‌سازی مرورگر در دسترس نیست؛ از نوشته‌ها پشتیبان بگیر.')}if(studioInitComplete)studioMirrorDraft()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));localStorage.setItem(CURRENT_KEY,currentPlanId);$('saveStatus').textContent='پیش‌نویس روی دستگاه ذخیره شد'}catch(e){$('saveStatus').textContent='ذخیره پیش‌نویس ممکن نیست';toast('فضای ذخیره‌سازی مرورگر در دسترس نیست؛ از نوشته‌ها پشتیبان بگیر.')}if(studioInitComplete){if(!studioRestoreFinished)studioEditedDuringRestore=true;studioMirrorDraft()}}
 async function saveArchiveAfterExport(snapshot,archiveId,kind){
  // Update the in-memory archive immediately, even if IndexedDB never opens.
  archiveMutation++;
@@ -376,7 +392,7 @@ function wrapLines(ctx,str,maxWidth,maxLines=999){let out=[];for(let paragraph o
 function drawText(ctx,s,x,y,maxW,maxLines,lineH,color){ctx.fillStyle=color;const lines=wrapLines(ctx,s,maxW,maxLines);for(let i=0;i<lines.length;i++)ctx.fillText(lines[i],x,y+i*lineH);return lines.length}
 async function downloadPng(plan=state,buttonId='downloadPng',archiveId=null){const snapshot=normalize(plan);plan=snapshot;let success=false;let btn=$(buttonId),original=btn.textContent;btn.disabled=true;btn.textContent='در حال ساخت تصویر...';try{if(document.fonts?.ready)await document.fonts.ready;let n=plan.columns.length,W=Math.max(2400,355*n+190),margin=85,bodyWidth=W-margin*2,dayW=170,colW=(bodyWidth-dayW)/n;let c=document.createElement('canvas'),ctx=c.getContext('2d');ctx.direction='rtl';ctx.textAlign='right';let rowHeights=[];font(ctx,550,32);for(let i=0;i<7;i++){let max=0;for(let col of plan.columns){let str=plan.cells[DAYS[i]+'|'+col.id]||'';let l=wrapLines(ctx,str,colW-34).length;max=Math.max(max,l)}rowHeights.push(Math.max(156,Math.min(2100,42+Math.max(1,max)*45)))}let H=430+92+rowHeights.reduce((a,b)=>a+b,0)+140;c.width=W;c.height=H;ctx.direction='rtl';ctx.textAlign='right';let p=PALETTES[plan.theme]||PALETTES.ocean,grad=ctx.createLinearGradient(0,0,W,H);grad.addColorStop(0,p.bg);grad.addColorStop(1,p.soft);ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);ctx.save();ctx.strokeStyle=p.accent;ctx.globalAlpha=.13;ctx.lineWidth=4;ctx.beginPath();ctx.arc(110,60,250,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(W+60,H-60,270,0,Math.PI*2);ctx.stroke();ctx.restore();ctx.fillStyle=p.accent;ctx.fillRect(W-margin-82,155,82,8);font(ctx,900,25);ctx.fillStyle=p.accent;ctx.fillText('WEEKLY PLANNER  •  هفته‌نگار',W-margin,135);font(ctx,900,65);drawText(ctx,plan.title||'برنامه هفتگی',W-margin,240,bodyWidth-350,1,78,p.dark);font(ctx,450,27);drawText(ctx,plan.subtitle||' ',W-margin,302,bodyWidth-340,2,43,p.muted);paintRound(ctx,margin,130,245,104,22,p.cell,p.line);ctx.fillStyle=p.muted;font(ctx,700,23);ctx.fillText('شروع هفته',margin+210,173);ctx.fillStyle=p.accent;font(ctx,900,31);ctx.fillText(persianStr(weekDates(plan)[0]),margin+210,215);let y=385;paintRound(ctx,margin,y,bodyWidth,89,16,p.soft,p.line);font(ctx,900,32);ctx.fillStyle=p.dark;ctx.textAlign='center';ctx.fillText('روز / تاریخ',W-margin-dayW/2,y+56);plan.columns.forEach((col,i)=>{ctx.fillText(col.name||'ستون',W-margin-dayW-colW*(i+.5),y+56,colW-18)});ctx.textAlign='right';y+=93;for(let i=0;i<7;i++){let h=rowHeights[i];paintRound(ctx,margin,y,bodyWidth,h-4,8,p.cell,p.line);paintRound(ctx,W-margin-dayW,y,dayW,h-4,8,p.soft,null);ctx.fillStyle=p.dark;font(ctx,900,32);ctx.textAlign='center';ctx.fillText(DAYS[i],W-margin-dayW/2,y+56);font(ctx,500,26);ctx.fillStyle=p.muted;ctx.fillText(persianStr(weekDates(plan)[i]),W-margin-dayW/2,y+92);ctx.textAlign='right';ctx.strokeStyle=p.line;ctx.lineWidth=2;for(let j=0;j<n;j++){let x=W-margin-dayW-colW*j;ctx.beginPath();ctx.moveTo(x,y+8);ctx.lineTo(x,y+h-12);ctx.stroke();font(ctx,550,32);drawText(ctx,plan.cells[DAYS[i]+'|'+plan.columns[j].id]||'',x-15,y+51,colW-30,80,45,p.dark)}y+=h}ctx.fillStyle=p.muted;font(ctx,600,25);drawText(ctx,plan.footer||' ',W-margin,y+59,bodyWidth-230,2,38,p.muted);font(ctx,900,24);ctx.fillStyle=p.accent;ctx.textAlign='left';ctx.fillText('هفته‌نگار ✦',margin,y+59);let blob=await new Promise(res=>c.toBlob(res,'image/png'));if(!blob)throw Error('ساخت تصویر ممکن نشد');downloadBlob(blob,exportFileName('png'));success=true;toast('تصویر برنامه با کیفیت بالا آماده شد.')}catch(err){console.error(err);toast('مشکل در ساخت تصویر: '+err.message)}finally{btn.disabled=false;btn.textContent=original;if(success)askArchiveAfterExport(snapshot,archiveId,'PNG')}}
 
-function exportAllPlans(){clearTimeout(timer);save();const pack={format:'hafteh-negar-library',version:2,exportedAt:new Date().toISOString(),themes:customThemes,templates:studioSavedTemplates,plans:library};downloadBlob(new Blob([JSON.stringify(pack,null,2)],{type:'application/json;charset=utf-8'}),'Peyshteban-'+exportFileName('json'));toast('پشتیبان همه برنامه‌ها و قالب‌ها آماده شد.')}
+function exportAllPlans(){clearTimeout(timer);save();const pack={format:'hafteh-negar-library',version:2,exportedAt:new Date().toISOString(),themes:customThemes,templates:studioSavedTemplates,plans:library,draft:state};downloadBlob(new Blob([JSON.stringify(pack,null,2)],{type:'application/json;charset=utf-8'}),'Peyshteban-'+exportFileName('json'));toast('پشتیبان همه برنامه‌ها و قالب‌ها آماده شد.')}
 function downloadPortableVersion(){
  // Create a self-contained copy whose archive survives changing browsers/file names.
  const clone=document.documentElement.cloneNode(true);
@@ -390,7 +406,7 @@ function downloadPortableVersion(){
  downloadBlob(new Blob([markup],{type:'text/html;charset=utf-8'}),'HaftehNegar-Saved-'+timestampInfo().file+'.html');
  toast('نسخه همراه با تمام برنامه‌ها دانلود شد. برای ادامه کار در آینده همین فایل را باز کن.');
 }
-function downloadArchiveBackup(){const pack={format:'hafteh-negar-library',version:5,exportedAt:new Date().toISOString(),themes:customThemes,templates:studioSavedTemplates,plans:library};downloadBlob(new Blob([JSON.stringify(pack,null,2)],{type:'application/json;charset=utf-8'}),'Archive-'+exportFileName('json'));}
+function downloadArchiveBackup(){const pack={format:'hafteh-negar-library',version:5,exportedAt:new Date().toISOString(),themes:customThemes,templates:studioSavedTemplates,plans:library,draft:state};downloadBlob(new Blob([JSON.stringify(pack,null,2)],{type:'application/json;charset=utf-8'}),'Archive-'+exportFileName('json'));}
 async function importPrograms(input){clearTimeout(timer);save();if(input?.format==='hafteh-negar-library'&&Array.isArray(input.plans)){if(!confirm('برنامه‌های فایل پشتیبان بدون حذف برنامه‌های فعلی به آرشیو اضافه شوند؟'))return;for(const theme of (Array.isArray(input.themes)?input.themes:[]).slice(0,30)){if(customThemes.length>=30)break;if(!/^user-[a-z0-9-]{3,60}$/.test(theme?.id||'')||!theme.colors||!['bg','dark','accent','soft','cell','line','muted'].every(k=>/^#[0-9a-f]{6}$/i.test(theme.colors[k]||'')))continue;const newId='user-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),item={id:newId,label:String(theme.label||'قالب بازیابی‌شده').slice(0,32),colors:theme.colors};customThemes.push(item);PALETTES[newId]=theme.colors;PRESETS.push([newId,item.label]);theme._restoreId=newId;}try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(customThemes))}catch(e){}let added=0;const mapping=new Map((input.themes||[]).filter(t=>t._restoreId).map(t=>[t.id,t._restoreId]));for(const item of input.plans.slice(0,150)){if(library.length>=150)break;try{const data=normalize({...item.data,theme:mapping.get(item.data?.theme)||item.data?.theme});const id=uid();library.push({id,title:data.title,kind:data.audience,updatedAt:Date.now()-added,data});added++}catch(e){}}if(Array.isArray(input.templates)){for(const t of input.templates.slice(0,30)){try{const parsed=normalize(t.data);const name=String(t.label||'قالب بازیابی‌شده').slice(0,40);if(studioSavedTemplates.length>=30)break;studioSavedTemplates.push({id:uid(),label:name,data:parsed})}catch(e){}}try{localStorage.setItem('barname-user-templates-v2',JSON.stringify(studioSavedTemplates))}catch(e){}studioWriteIDB('templates',studioSavedTemplates)}if(!added){toast('هیچ برنامه معتبری برای بازیابی پیدا نشد.');return}const first=library[library.length-added];state=normalize(first.data);currentPlanId=first.id;rebuild();save();archiveMutation++;if(!(await persistArchive(library))){toast('آرشیو باز شد ولی ذخیره دائمی ممکن نشد؛ فایل پشتیبان را نگه دار.')}else toast(`${toFa(added)} برنامه به آرشیو اضافه شد.`)}else{const parsed=normalize(input);if(!confirm('برنامه فایل به‌عنوان یک پیش‌نویس جدید باز شود؟'))return;currentPlanId=uid();state=parsed;rebuild();save();toast('برنامه به‌عنوان پیش‌نویس بازیابی شد؛ پس از خروجی می‌توانی آن را به آرشیو اضافه کنی.')}}
 /* An exported file and an archived program are separate decisions */
 let pendingArchive=null;
@@ -613,13 +629,64 @@ function studioSettings(){document.body.classList.add('studio-settings-open');co
 function studioCloseSettings(){document.body.classList.remove('studio-settings-open')}
 function studioFocus(){const focused=document.body.classList.toggle('studio-focus');$('studioFocusExit').hidden=!focused;if(focused){setTab('preview');$('editorAnchor').scrollIntoView({behavior:'smooth',block:'start'})}else setTab('edit')}
 function studioApplyArchiveDecorations(){for(const btn of document.querySelectorAll('.saved-program')){const title=btn.querySelector('strong')?.textContent||'';const all=library.find(x=>x.label&&title.includes(x.label))||library.find(x=>x.title&&title.includes(x.title));if(!all)continue;btn.classList.toggle('studio-pinned',studioPinned.has(all.id))}}
-function studioMirrorDraft(){if(!studioInitComplete||studioRestoreInProgress)return;studioLastSnapshot=JSON.stringify(state);if($('studioSaveMirror')){$('studioSaveMirror').textContent='✓ پیش‌نویس ذخیره شد';$('studioSaveMirror').classList.remove('warn')}studioWriteIDB('draft',state).then(ok=>{if(!ok&&$('studioSaveMirror')){$('studioSaveMirror').textContent='⚠ از پشتیبان JSON استفاده کن';$('studioSaveMirror').classList.add('warn')}})}
+function studioMirrorDraft(){if(!studioInitComplete||studioRestoreInProgress||!studioRestoreFinished)return;studioLastSnapshot=JSON.stringify(state);if($('studioSaveMirror')){$('studioSaveMirror').textContent='✓ پیش‌نویس ذخیره شد';$('studioSaveMirror').classList.remove('warn')}studioWriteIDB('draft',state).then(ok=>{if(!ok&&$('studioSaveMirror')){$('studioSaveMirror').textContent='⚠ از پشتیبان JSON استفاده کن';$('studioSaveMirror').classList.add('warn')}})}
 const studioDbPromise=(async()=>{try{return await new Promise(resolve=>{const req=indexedDB.open('barname-studio-v2',1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('state'))db.createObjectStore('state')};req.onsuccess=()=>resolve(req.result);req.onerror=()=>resolve(null);req.onblocked=()=>resolve(null)})}catch(e){return null}})();
 async function studioWriteIDB(key,value){const db=await studioDbPromise;if(!db)return false;return new Promise(resolve=>{try{const tx=db.transaction('state','readwrite');tx.objectStore('state').put(structuredClone(value),key);tx.oncomplete=()=>resolve(true);tx.onerror=()=>resolve(false);tx.onabort=()=>resolve(false)}catch(e){resolve(false)}})}
 async function studioReadIDB(key){const db=await studioDbPromise;if(!db)return null;return new Promise(resolve=>{try{const r=db.transaction('state','readonly').objectStore('state').get(key);r.onsuccess=()=>resolve(r.result??null);r.onerror=()=>resolve(null)}catch(e){resolve(null)}})}
-async function studioRestoreDraft(){const draft=await studioReadIDB('draft');if(!draft)return;try{const local=localStorage.getItem(KEY);if(!studioHadLocalDraft){studioRestoreInProgress=true;state=normalize(draft);rebuild();save();studioRestoreInProgress=false;studioDrawDay();studioDrawDensity();toast('پیش‌نویس قبلی از حافظه بازیابی شد')}}catch(e){studioRestoreInProgress=false}}
-async function studioBootstrapStorage(){await libraryReady;const fromDB=await studioReadIDB('library');if(Array.isArray(fromDB)&&fromDB.length){const combined=new Map();for(const item of [...fromDB,...library]){if(!item?.id||!item?.data||!Array.isArray(item.data.columns))continue;const old=combined.get(item.id);if(!old||(item.updatedAt||0)>=(old.updatedAt||0))combined.set(item.id,item)}const merged=[...combined.values()].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,150);if(JSON.stringify(merged)!==JSON.stringify(library)){library=merged;await persistArchive(library);if($('libraryModal').classList.contains('open'))renderLibrary()}}await studioWriteIDB('library',library);await studioWriteIDB('themes',customThemes);await studioWriteIDB('templates',studioSavedTemplates)}
-function studioStart(){studioMakeBoard();studioInitComplete=true;studioLastSnapshot=JSON.stringify(state);studioDrawDays();studioDrawDay();studioDrawDensity();studioSetMode(studioMode);studioUndoButtons();studioRestoreDraft();studioBootstrapStorage().catch(e=>console.warn('Storage migration',e));const grid=$('editGrid');grid.addEventListener('focusin',e=>{if(e.target.matches('textarea'))e.target.dataset.before=JSON.stringify(state)});grid.addEventListener('focusout',e=>{if(e.target.matches('textarea')){const prior=e.target.dataset.before;if(prior&&prior!==JSON.stringify(state)){studioTimeline.push(prior);studioTimeline=studioTimeline.slice(-40);studioFuture=[];studioLastSnapshot=JSON.stringify(state);studioUndoButtons()}studioDrawDay();studioDrawDensity()}});document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!e.target.matches('input,textarea,[contenteditable]')){e.preventDefault();e.shiftKey?studioRedo():studioUndo()}if(e.key==='Escape'&&document.body.classList.contains('studio-focus'))studioFocus();if(e.key==='Escape'&&document.body.classList.contains('studio-settings-open'))studioCloseSettings()});$('prevWeek').addEventListener('click',()=>{studioDrawDays();studioDrawDay();studioDrawDensity()});$('nextWeek').addEventListener('click',()=>{studioDrawDays();studioDrawDay();studioDrawDensity()});for(const el of ['pDay','pMonth','pYear'])$(el).addEventListener('change',()=>{studioDrawDays();studioDrawDay();studioDrawDensity()});
+let studioRestoreFinished=false;
+let studioEditedDuringRestore=false;
+async function studioRestoreDraft(){
+ try{
+  const draft=await studioReadIDB('draft');
+  if(draft && !studioHadLocalDraft && !studioEditedDuringRestore && !portableArchive?.draft){
+   studioRestoreInProgress=true;
+   state=normalize(draft);rebuild();save();
+   studioDrawDay();studioDrawDensity();
+   toast('پیش‌نویس قبلی از حافظه بازیابی شد');
+  }
+ }catch(e){console.warn('Draft restore',e)}
+ finally{studioRestoreInProgress=false;studioRestoreFinished=true}
+}
+async function studioBootstrapStorage(){
+ await libraryReady;
+ let master=false;
+ try{master=Boolean(localStorage.getItem(ARCHIVE_REV_KEY))}catch(e){}
+ const fromDB=await studioReadIDB('library');
+ if(!master && archiveMutation===0 && Array.isArray(fromDB) && fromDB.length){
+  const combined=new Map();
+  for(const item of [...fromDB,...library]){
+   if(!item?.id||!item.data||!Array.isArray(item.data.columns))continue;
+   const old=combined.get(item.id);
+   if(!old || Number(item.updatedAt||0)>Number(old.updatedAt||0))combined.set(item.id,item)
+  }
+  const merged=[...combined.values()].sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).slice(0,150);
+  if(JSON.stringify(merged)!==JSON.stringify(library))library=merged;
+ }
+ // Do not overwrite existing IDB backup with an empty local collection on boot.
+ if(library.length || master || archiveMutation>0)await persistArchive(library);
+ try{if(!localStorage.getItem(CUSTOM_KEY)){
+  const themes=await studioReadIDB('themes');
+  if(Array.isArray(themes) && themes.length){
+   for(const item of themes){if(!item?.id||customThemes.some(x=>x.id===item.id)||!item.colors)continue;
+    if(!/^user-[a-z0-9-]{3,60}$/.test(item.id)||!['bg','dark','accent','soft','cell','line','muted'].every(k=>/^#[0-9a-f]{6}$/i.test(item.colors[k]||'')))continue;
+    customThemes.push(item);PALETTES[item.id]=item.colors;PRESETS.push([item.id,item.label||'قالب شخصی']);
+   }
+   if(customThemes.length){localStorage.setItem(CUSTOM_KEY,JSON.stringify(customThemes));renderThemes()}
+  }
+ }}catch(e){}
+ try{if(!localStorage.getItem('barname-user-templates-v2')){
+  const old=await studioReadIDB('templates');
+  if(Array.isArray(old) && old.length){
+   studioSavedTemplates=old.slice(0,30).filter(x=>x?.id&&x?.data&&Array.isArray(x.data.columns));
+   localStorage.setItem('barname-user-templates-v2',JSON.stringify(studioSavedTemplates));
+   studioRenderUserTemplates();
+  }
+ }}catch(e){}
+ if(customThemes.length)await studioWriteIDB('themes',customThemes);
+ if(studioSavedTemplates.length)await studioWriteIDB('templates',studioSavedTemplates);
+ if($('libraryModal')?.classList.contains('open'))renderLibrary();
+}
+function studioStart(){studioMakeBoard();studioInitComplete=true;studioLastSnapshot=JSON.stringify(state);studioDrawDays();studioDrawDay();studioDrawDensity();studioSetMode(studioMode);studioUndoButtons();studioRestoreDraft().then(()=>{if(studioEditedDuringRestore)studioMirrorDraft()});studioBootstrapStorage().catch(e=>console.warn('Storage migration',e));const grid=$('editGrid');grid.addEventListener('focusin',e=>{if(e.target.matches('textarea'))e.target.dataset.before=JSON.stringify(state)});grid.addEventListener('focusout',e=>{if(e.target.matches('textarea')){const prior=e.target.dataset.before;if(prior&&prior!==JSON.stringify(state)){studioTimeline.push(prior);studioTimeline=studioTimeline.slice(-40);studioFuture=[];studioLastSnapshot=JSON.stringify(state);studioUndoButtons()}studioDrawDay();studioDrawDensity()}});document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!e.target.matches('input,textarea,[contenteditable]')){e.preventDefault();e.shiftKey?studioRedo():studioUndo()}if(e.key==='Escape'&&document.body.classList.contains('studio-focus'))studioFocus();if(e.key==='Escape'&&document.body.classList.contains('studio-settings-open'))studioCloseSettings()});$('prevWeek').addEventListener('click',()=>{studioDrawDays();studioDrawDay();studioDrawDensity()});$('nextWeek').addEventListener('click',()=>{studioDrawDays();studioDrawDay();studioDrawDensity()});for(const el of ['pDay','pMonth','pYear'])$(el).addEventListener('change',()=>{studioDrawDays();studioDrawDay();studioDrawDensity()});
  let startX=0;const dayView=$('studioDayView');dayView.addEventListener('touchstart',e=>{startX=e.changedTouches[0].clientX},{passive:true});dayView.addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-startX;if(Math.abs(d)>110&&e.target.tagName!=='TEXTAREA')studioSetDay(studioDayIndex+(d>0?1:-1))},{passive:true});
  const startSave=save;/* Mirror is called from the patched save() function; no change to original primary localStorage path. */
 }

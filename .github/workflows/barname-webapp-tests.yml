@@ -1,0 +1,17 @@
+name: Barname WebApp Tests
+on:
+  pull_request:
+    paths: ['webapp/**', '.github/workflows/barname-webapp-tests.yml']
+  push:
+    branches: [main]
+    paths: ['webapp/**', '.github/workflows/barname-webapp-tests.yml']
+jobs:
+  storage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test offline storage and migration
+        run: node webapp/tests/storage-regression.cjs
