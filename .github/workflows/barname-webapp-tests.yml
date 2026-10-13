@@ -19,3 +19,5 @@ jobs:
         run: node webapp/tests/import-regression.cjs
       - name: Test safe archive save after export
         run: node webapp/tests/archive-save-regression.cjs
+      - name: Test mobile library pinning and Persian search
+        run: node webapp/tests/library-regression.cjs

@@ -665,8 +665,42 @@ async function printPlan(plan=state,archiveId=null){
  finally{pdfExportRunning=false;if(btn){btn.disabled=false;btn.textContent=old}}
 }
 function currentItem(){return library.find(p=>p.id===selectedLibraryId)}
-function archiveItemUI(item){const btn=document.createElement('button');btn.className='saved-program'+(item.id===selectedLibraryId?' active':'');const a=document.createElement('span');const title=document.createElement('strong');title.textContent=item.label||(item.title||'بدون عنوان')+' · '+(item.updatedAt?timestampInfo(new Date(item.updatedAt)).display:'');const small=document.createElement('small');let date=new Date(item.updatedAt||Date.now());small.textContent=Number.isNaN(date.getTime())?'':`${item.exportConfirmed?'ثبت خروجی':'آرشیو نسخه قبل'}: ${persianStr(new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate(),12)),true)}`;a.append(title,small);btn.append(a,document.createTextNode(studioPinned.has(item.id)?'★':'◂'));btn.title=studioPinned.has(item.id)?'ستاره‌دار':'برنامه ذخیره‌شده';btn.oncontextmenu=e=>{e.preventDefault();if(studioPinned.has(item.id))studioPinned.delete(item.id);else studioPinned.add(item.id);try{localStorage.setItem('barname-pinned',JSON.stringify([...studioPinned]))}catch(e){}renderLibrary()};btn.onclick=()=>{selectedLibraryId=item.id;zoomPercent=100;$('zoomRange').value=100;renderLibrary()};return btn}
-function renderLibrary(){for(const [kind,id,countId] of [['self','selfPlans','selfCount'],['others','otherPlans','othersCount']]){const host=$(id);host.replaceChildren();const group=library.filter(p=>(p.kind==='others'?'others':'self')===kind).filter(studioLibraryMatches).sort((a,b)=>studioPinned.has(a.id)!==studioPinned.has(b.id)?(studioPinned.has(a.id)?-1:1):studioLibrarySort==='oldest'?(a.updatedAt||0)-(b.updatedAt||0):studioLibrarySort==='alpha'?String(a.title||a.label||'').localeCompare(String(b.title||b.label||''),'fa'):(b.updatedAt||0)-(a.updatedAt||0));$(countId).textContent=toFa(group.length);if(!group.length){const empty=document.createElement('div');empty.className='library-empty';empty.textContent=kind==='self'?'بعد از خروجی و تأیید ذخیره، برنامه‌های خودت اینجا دیده می‌شن.':'برنامه‌های دیگران بعد از خروجی و تأیید ذخیره، اینجا دیده می‌شن.';host.append(empty)}else group.forEach(p=>host.append(archiveItemUI(p)))}let item=currentItem(),no=!item;for(const id of ['libraryPng','libraryPdf','libraryOpen','libraryDelete','zoomOut','zoomIn','zoomRange'])$(id).disabled=no;$('selectedPlanTitle').textContent=item?.label||item?.title||'یک برنامه از دو ستون انتخاب کن';$('selectedPlanMeta').textContent=item?(item.kind==='others'?'برای دیگران':'برای خودم')+' • '+persianStr(fromIso(item.data.startDate),true):'برای مشاهده پیش‌نمایش، روی عنوان برنامه بزن.';$('libraryPreviewSheet').replaceChildren(...(item?[makeSheet(normalize(item.data))]:[]));requestAnimationFrame(scaleLibraryPreview)}
+function studioToggleArchivePin(id){
+ if(!library.some(p=>p.id===id))return;
+ if(studioPinned.has(id))studioPinned.delete(id);else studioPinned.add(id);
+ const pins=[...studioPinned];
+ try{localStorage.setItem('barname-pinned',JSON.stringify(pins))}catch(e){}
+ if(studioInitComplete)studioWriteIDB('pinned',pins).catch(()=>{});
+ renderLibrary();
+}
+function archiveItemUI(item){
+ const row=document.createElement('div');
+ row.className='saved-program-row';
+ const btn=document.createElement('button');
+ btn.type='button';btn.className='saved-program'+(item.id===selectedLibraryId?' active':'');
+ const content=document.createElement('span');
+ const title=document.createElement('strong');
+ title.textContent=item.label||(item.title||'بدون عنوان')+' · '+(item.updatedAt?timestampInfo(new Date(item.updatedAt)).display:'');
+ const small=document.createElement('small');
+ const d=new Date(item.updatedAt||Date.now());
+ small.textContent=Number.isNaN(d.getTime())?'':(item.exportConfirmed?'ثبت خروجی':'آرشیو نسخه قبل')+': '+
+  persianStr(new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(),12)),true);
+ content.append(title,small);btn.append(content);
+ btn.setAttribute('aria-label','مشاهده برنامه '+String(item.title||'بدون عنوان'));
+ btn.onclick=()=>{selectedLibraryId=item.id;zoomPercent=100;$('zoomRange').value=100;renderLibrary()};
+ btn.oncontextmenu=e=>{e.preventDefault();studioToggleArchivePin(item.id)};
+ const star=document.createElement('button');star.type='button';
+ const pinned=studioPinned.has(item.id);
+ star.className='saved-pin'+(pinned?' pinned':'');
+ star.textContent=pinned?'★':'☆';
+ star.setAttribute('aria-pressed',String(pinned));
+ star.setAttribute('aria-label',(pinned?'برداشتن سنجاق از ':'سنجاق‌کردن ')+'برنامه '+String(item.title||'بدون عنوان'));
+ star.title=pinned?'حذف از علاقه‌مندی‌ها':'افزودن به علاقه‌مندی‌ها';
+ star.onclick=()=>studioToggleArchivePin(item.id);
+ row.append(btn,star);
+ return row;
+}
+function renderLibrary(){for(const [kind,id,countId] of [['self','selfPlans','selfCount'],['others','otherPlans','othersCount']]){const host=$(id);host.replaceChildren();const group=library.filter(p=>(p.kind==='others'?'others':'self')===kind).filter(studioLibraryMatches).sort((a,b)=>studioPinned.has(a.id)!==studioPinned.has(b.id)?(studioPinned.has(a.id)?-1:1):studioLibrarySort==='oldest'?(a.updatedAt||0)-(b.updatedAt||0):studioLibrarySort==='alpha'?String(a.title||a.label||'').localeCompare(String(b.title||b.label||''),'fa'):(b.updatedAt||0)-(a.updatedAt||0));$(countId).textContent=toFa(group.length);if(!group.length){const empty=document.createElement('div');empty.className='library-empty';empty.textContent=studioLibraryQuery?'برنامه‌ای با این عبارت پیدا نشد.':(kind==='self'?'بعد از خروجی و تأیید ذخیره، برنامه‌های خودت اینجا دیده می‌شن.':'برنامه‌های دیگران بعد از خروجی و تأیید ذخیره، اینجا دیده می‌شن.');host.append(empty)}else group.forEach(p=>host.append(archiveItemUI(p)))}let item=currentItem(),no=!item;for(const id of ['libraryPng','libraryPdf','libraryOpen','libraryDelete','zoomOut','zoomIn','zoomRange'])$(id).disabled=no;$('selectedPlanTitle').textContent=item?.label||item?.title||'یک برنامه از دو ستون انتخاب کن';$('selectedPlanMeta').textContent=item?(item.kind==='others'?'برای دیگران':'برای خودم')+' • '+persianStr(fromIso(item.data.startDate),true):'برای مشاهده پیش‌نمایش، روی عنوان برنامه بزن.';$('libraryPreviewSheet').replaceChildren(...(item?[makeSheet(normalize(item.data))]:[]));requestAnimationFrame(scaleLibraryPreview)}
 function scaleLibraryPreview(){const el=$('libraryPreviewSheet'),size=$('libraryPreviewSize'),viewport=$('libraryViewport');if(!el.firstChild){size.style.height='90px';return}const natural=980,base=Math.min(1,Math.max(.15,(viewport.clientWidth-24)/natural)),scale=base*(zoomPercent/100);el.style.transform=`scale(${scale})`;size.style.width=Math.ceil(natural*scale)+'px';size.style.height=Math.ceil(el.scrollHeight*scale)+'px';$('zoomLabel').textContent=toFa(zoomPercent)+'٪'}
 function openLibrary(){clearTimeout(timer);save();if(!library.some(p=>p.id===selectedLibraryId))selectedLibraryId=library[0]?.id||null;renderLibrary();updateArchiveStorageStatus();showModal('libraryModal');requestAnimationFrame(scaleLibraryPreview)}
 function openSaved(){let item=currentItem();if(!item)return;clearTimeout(timer);save();state=normalize(item.data);currentPlanId=item.id;hideModal('libraryModal');rebuild();save();setTab('edit');$('editorAnchor').scrollIntoView({behavior:'smooth',block:'start'});toast('نسخه ویرایشی باز شد؛ تغییرات فقط بعد از خروجی و تأیید، در آرشیو اعمال می‌شوند.')}
@@ -725,10 +759,22 @@ let studioTimeline=[],studioFuture=[],studioLastSnapshot=null;
 let studioLibraryQuery='',studioLibrarySort='recent';
 let studioDensityVisible=true;
 let studioSavedTemplates=(()=>{try{const a=JSON.parse(localStorage.getItem('barname-user-templates-v2')||'[]');const t=Array.isArray(portableArchive?.templates)?portableArchive.templates:[];return [...(Array.isArray(a)?a:[]),...t].filter((x,i,arr)=>x?.id&&arr.findIndex(v=>v.id===x.id)===i).slice(0,30)}catch(e){return []}})();
-const studioPinned = new Set((()=>{try{return JSON.parse(localStorage.getItem('barname-pinned')||'[]')}catch(e){return []}})());
+const studioPinned = new Set((()=>{try{const data=JSON.parse(localStorage.getItem('barname-pinned')||'[]');return Array.isArray(data)?data.filter(id=>typeof id==='string').slice(0,150):[]}catch(e){return []}})());
 const studioFaDate=d=>persianStr(d,true);
 const studioElement=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!=null)el.textContent=text;return el};
-function studioLibraryMatches(item){return !studioLibraryQuery || [item.label,item.title,item.data?.title,item.data?.startDate].join(' ').toLowerCase().includes(studioLibraryQuery)}
+function studioNormalizeLibrarySearch(value){
+ return toEn(String(value??'').normalize('NFKC'))
+  .replace(/[يى]/g,'ی').replace(/ك/g,'ک')
+  .replace(/[\u064b-\u065f\u0670]/g,'')
+  .replace(/[\s\u200c_-]+/g,'').toLowerCase();
+}
+function studioLibraryMatches(item){
+ const query=studioNormalizeLibrarySearch(studioLibraryQuery);
+ if(!query)return true;
+ const fields=[item.label,item.title,item.data?.title,item.data?.startDate,
+  ...(Array.isArray(item.data?.columns)?item.data.columns.map(c=>c?.name):[])];
+ return studioNormalizeLibrarySearch(fields.filter(Boolean).join(' ')).includes(query);
+}
 function studioMemorize(){if(!studioInitComplete||studioRestoreInProgress)return;const snap=JSON.stringify(state);if(studioLastSnapshot!==snap){if(studioLastSnapshot)studioTimeline.push(studioLastSnapshot);studioTimeline=studioTimeline.slice(-40);studioFuture=[];studioLastSnapshot=snap;studioUndoButtons()}}
 function studioUndoButtons(){for(const [id,value] of [['studioUndo',studioTimeline.length],['studioRedo',studioFuture.length]]){const x=$(id);if(x)x.disabled=!value}}
 function studioApplySnapshot(json){try{studioRestoreInProgress=true;state=normalize(JSON.parse(json));rebuild();save();studioLastSnapshot=JSON.stringify(state);studioDrawDay();studioDrawDensity()}finally{studioRestoreInProgress=false;studioUndoButtons()}}
@@ -823,6 +869,16 @@ async function studioBootstrapStorage(){
    studioRenderUserTemplates();
   }
  }}catch(e){}
+ try{
+  const localPins=localStorage.getItem('barname-pinned');
+  if(!localPins){
+   const oldPins=await studioReadIDB('pinned');
+   if(Array.isArray(oldPins)){
+    for(const pin of oldPins)if(typeof pin==='string'&&pin.length<150)studioPinned.add(pin);
+    try{localStorage.setItem('barname-pinned',JSON.stringify([...studioPinned]))}catch(e){}
+   }
+  }else await studioWriteIDB('pinned',[...studioPinned]);
+ }catch(e){console.warn('Pinned archive restore',e)}
  if(customThemes.length)await studioWriteIDB('themes',customThemes);
  if(studioSavedTemplates.length)await studioWriteIDB('templates',studioSavedTemplates);
  if($('libraryModal')?.classList.contains('open'))renderLibrary();
@@ -836,6 +892,14 @@ window.addEventListener('resize',()=>requestAnimationFrame(fitPreview));initDate
 })();
 </script>
 
+<style>
+.saved-program-row{display:flex;align-items:center;gap:8px;width:100%;margin-bottom:6px}
+.saved-program-row>.saved-program{flex:1;min-width:0;min-height:52px}
+.saved-pin{flex:0 0 44px;width:44px;height:44px;border-radius:11px;border:1px solid #d8e2f0;background:#f3f7ff;color:#7586a5;font-size:23px;cursor:pointer;display:grid;place-items:center}
+.saved-pin.pinned{background:#fff4d9;border-color:#e6b863;color:#b57a0d}
+.saved-pin:focus-visible{outline:3px solid #326dff;outline-offset:2px}
+@media(max-width:700px){.saved-program-row>.saved-program{min-height:54px}.saved-pin{flex-basis:46px;width:46px;height:46px}}
+</style>
 <style>
 #installPwaButton{border:1px solid #c9d8fc;background:#f0f5ff;color:#2446aa;font-weight:800}
 #installPwaButton:hover{background:#e2edff}
