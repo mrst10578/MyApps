@@ -352,20 +352,34 @@ async function persistArchive(items){
 let studioHadLocalDraft=false;let state;try{const stored=localStorage.getItem(KEY);studioHadLocalDraft=!!stored;state=portableArchive?.draft?normalize(portableArchive.draft):stored?normalize(JSON.parse(stored)):def();if(!stored&&!portableArchive?.draft){const found=library.find(x=>x.id===currentPlanId);if(found)state=normalize(found.data)}}catch(err){try{state=portableArchive?.draft?normalize(portableArchive.draft):def()}catch(e){state=def()}};let tab='edit',timer=null,toastTimer=null,selectedLibraryId=null,zoomPercent=100,printRestoreTimer=null;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));localStorage.setItem(CURRENT_KEY,currentPlanId);$('saveStatus').textContent='پیش‌نویس روی دستگاه ذخیره شد'}catch(e){$('saveStatus').textContent='ذخیره پیش‌نویس ممکن نیست';toast('فضای ذخیره‌سازی مرورگر در دسترس نیست؛ از نوشته‌ها پشتیبان بگیر.')}if(studioInitComplete){if(!studioRestoreFinished)studioEditedDuringRestore=true;studioMirrorDraft()}}
 async function saveArchiveAfterExport(snapshot,archiveId,kind){
- // Update the in-memory archive immediately, even if IndexedDB never opens.
- archiveMutation++;
+ // Wait for legacy migration before mutating the archive.
+ await libraryReady;
  const data=normalize({...snapshot,audience:kind});
  const id=archiveId||uid(),now=Date.now(),savedAt=timestampInfo(new Date(now));
- const item={id,kind,title:data.title||'برنامه بدون عنوان',label:`${data.title||'برنامه'} · ${savedAt.display}`,updatedAt:now,data,exportConfirmed:true};
- const i=library.findIndex(p=>p.id===id),next=[...library];
- if(i>=0)next.splice(i,1);
+ const item={id,kind,title:data.title||'برنامه بدون عنوان',
+  label:(data.title||'برنامه')+' · '+savedAt.display,
+  updatedAt:now,data,exportConfirmed:true};
+ const index=library.findIndex(p=>p.id===id),next=[...library];
+ if(index>=0)next.splice(index,1);
  next.unshift(item);
- if(next.length>150){toast('آرشیو پر شده؛ برای ذخیره جدید یک برنامه قدیمی را حذف کن.');return false}
+ if(next.length>150){
+  toast('آرشیو پر شده؛ برای ذخیره جدید یک برنامه قدیمی را حذف کن.');
+  return false;
+ }
+ archiveMutation++;
+ if(!(await persistArchive(next))){
+  toast('ذخیره آرشیو تأیید نشد؛ اطلاعات فعلی حفظ شدند. فایل JSON پشتیبان بگیر و دوباره تلاش کن.');
+  return false;
+ }
+ // Commit the in-memory view only after a durable storage write succeeds.
  library=next;selectedLibraryId=id;
- const persisted=await persistArchive(next);
- if(archiveId===currentPlanId){state.audience=kind;document.querySelectorAll('input[name=audience]').forEach(r=>r.checked=r.value===kind);save()}
- toast(persisted?(i>=0?'برنامه در آرشیو به‌روزرسانی شد.':'برنامه در آرشیو ثبت و ذخیره شد.'):'برنامه فعلاً در آرشیو دیده می‌شود؛ ذخیره دائمی ممکن نیست، نسخه همراه با برنامه‌ها را دانلود کن.');
- return persisted;
+ if(archiveId===currentPlanId){
+  state.audience=kind;
+  document.querySelectorAll('input[name=audience]').forEach(r=>r.checked=r.value===kind);
+  save();
+ }
+ toast(index>=0?'برنامه با موفقیت در آرشیو به‌روزرسانی شد.':'برنامه با موفقیت در آرشیو ذخیره شد.');
+ return true;
 }
 function scheduleSave(){ $('saveStatus').textContent='در حال ذخیره...';clearTimeout(timer);timer=setTimeout(save,350)}
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3200)}
