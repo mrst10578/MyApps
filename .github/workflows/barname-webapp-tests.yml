@@ -21,3 +21,5 @@ jobs:
         run: node webapp/tests/archive-save-regression.cjs
       - name: Test mobile library pinning and Persian search
         run: node webapp/tests/library-regression.cjs
+      - name: Test archive previews and duplicate lineage
+        run: node webapp/tests/archive-preview-regression.cjs
