@@ -25,3 +25,5 @@ jobs:
         run: node webapp/tests/archive-preview-regression.cjs
       - name: Test advanced theme designer and contrast
         run: node webapp/tests/theme-designer-regression.cjs
+      - name: Test cell repeat actions and undo
+        run: node webapp/tests/cell-repeat-regression.cjs
