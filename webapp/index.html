@@ -366,7 +366,7 @@ async function saveArchiveAfterExport(snapshot,archiveId,kind){
    item.createdFrom=clone.sourceId;
  }catch(e){}}
  const index=library.findIndex(p=>p.id===id),next=[...library];
- if(index>=0)next.splice(index,1);
+ if(index>=0){if(library[index]?.createdFrom && !item.createdFrom)item.createdFrom=library[index].createdFrom;next.splice(index,1);}
  next.unshift(item);
  if(next.length>150){
   toast('آرشیو پر شده؛ برای ذخیره جدید یک برنامه قدیمی را حذف کن.');
