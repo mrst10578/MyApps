@@ -874,7 +874,54 @@ function studioChange(action){const before=JSON.stringify(state);action();if(bef
 function studioSetDay(i){studioDayIndex=(i+7)%7;try{sessionStorage.setItem('barname-day',String(studioDayIndex))}catch(e){}studioDrawDays();studioDrawDay()}
 function studioSetMode(mode){studioMode=mode;const on=mode==='day';$('editSection').classList.toggle('studio-day-mode',on);$('studioModeDay').classList.toggle('active',on);$('studioModeWeek').classList.toggle('active',!on);$('studioModeDay').setAttribute('aria-pressed',String(on));$('studioModeWeek').setAttribute('aria-pressed',String(!on));setTab('edit');if(on)studioDrawDay();}
 function studioDrawDays(){const strip=$('studioDayStrip');if(!strip)return;strip.replaceChildren();const dates=weekDates();DAYS.forEach((day,i)=>{const btn=studioElement('button','studio-day-button'+(studioDayIndex===i?' active':''));btn.type='button';btn.setAttribute('aria-label',day+' '+persianStr(dates[i]));btn.setAttribute('aria-pressed',String(studioDayIndex===i));btn.append(studioElement('b','',day.slice(0,1)),studioElement('small','',persianStr(dates[i])));const [py,pm,pd]=persianParts(dates[i]);const occasion=eventInfo(py,pm,pd);if(occasion.events.length){btn.title=occasion.events.join('، ');btn.append(studioElement('span','studio-occasion-dot'))}btn.onclick=()=>studioSetDay(i);strip.append(btn)});$('studioWeekTitle').textContent=persianStr(dates[0],true)+' تا '+persianStr(dates[6],true)}
-function studioDrawDay(){const host=$('studioDayView');if(!host)return;host.replaceChildren();const day=DAYS[studioDayIndex];for(const col of state.columns){const card=studioElement('section','studio-day-card');const id='studio-'+studioDayIndex+'-'+col.id;const label=studioElement('label','',col.name);label.htmlFor=id;const textarea=studioElement('textarea');textarea.id=id;textarea.maxLength=2000;textarea.placeholder='برنامه این بخش را بنویس...';textarea.value=state.cells[day+'|'+col.id]||'';textarea.setAttribute('aria-label',day+'، '+col.name);textarea.addEventListener('focus',()=>{textarea.dataset.before=JSON.stringify(state)});textarea.addEventListener('input',()=>{state.cells[day+'|'+col.id]=textarea.value;const i=studioDayIndex*state.columns.length+state.columns.indexOf(col);const area=$('editGrid').querySelectorAll('.g-cell textarea')[i];if(area&&area!==textarea){area.value=textarea.value;area.closest('.g-cell').classList.toggle('has-content',!!textarea.value.trim())}updateStats();scheduleSave();studioDrawDensity()});textarea.addEventListener('blur',()=>{const old=textarea.dataset.before;if(old&&old!==JSON.stringify(state)){studioTimeline.push(old);studioTimeline=studioTimeline.slice(-40);studioFuture=[];studioLastSnapshot=JSON.stringify(state);studioUndoButtons()}});const foot=studioElement('footer');const copy=studioElement('button','','کپی');copy.type='button';copy.onclick=async()=>{try{await navigator.clipboard.writeText(textarea.value);toast('متن کپی شد')}catch(e){textarea.select();document.execCommand('copy');toast('متن انتخاب و کپی شد')}};const clear=studioElement('button','','پاک‌کردن');clear.type='button';clear.onclick=()=>{if(!textarea.value)return;studioChange(()=>{delete state.cells[day+'|'+col.id]})};foot.append(copy,clear);card.append(label,textarea,foot);host.append(card)}
+function studioApplyCellRepeat(plan,sourceDay,colId,targets){
+ const value=plan.cells[sourceDay+'|'+colId]||'';
+ for(const day of targets){
+  if(!DAYS.includes(day)||day===sourceDay)continue;
+  plan.cells[day+'|'+colId]=value;
+ }
+}
+function studioOpenCellRepeat(day,col){
+ const key=day+'|'+col.id,value=state.cells[key]||'';
+ if(!value.trim()){toast('اول در این خانه متنی بنویس.');return}
+ const dialog=document.createElement('dialog');
+ dialog.className='studio-cell-repeat-dialog';
+ dialog.setAttribute('aria-label','تکرار برنامه در روزهای دیگر');
+ const title=document.createElement('h3');title.textContent='تکرار «'+col.name+'» در روزهای دیگر';
+ const description=document.createElement('p');
+ description.textContent='روزهای مقصد را انتخاب کن. فقط محتوای همین ستون کپی می‌شود و قابل بازگرداندن است.';
+ const options=document.createElement('div');options.className='studio-repeat-days';
+ const checkboxes=[];
+ for(const target of DAYS){
+  if(target===day)continue;
+  const label=document.createElement('label'),checkbox=document.createElement('input');
+  checkbox.type='checkbox';checkbox.value=target;checkbox.setAttribute('aria-label','تکرار در '+target);
+  const caption=document.createElement('span');caption.textContent=target;
+  label.append(checkbox,caption);options.append(label);checkboxes.push(checkbox);
+ }
+ const actions=document.createElement('div');actions.className='studio-repeat-actions';
+ const cancel=document.createElement('button');cancel.type='button';cancel.textContent='انصراف';
+ const apply=document.createElement('button');apply.type='button';apply.textContent='تکرار در روزهای انتخابی';
+ apply.className='btn btn-primary';
+ cancel.onclick=()=>dialog.close();
+ apply.onclick=()=>{
+  const targets=checkboxes.filter(x=>x.checked).map(x=>x.value);
+  if(!targets.length){toast('حداقل یک روز مقصد را انتخاب کن.');return}
+  if(targets.some(target=>String(state.cells[target+'|'+col.id]||'').trim()) &&
+   !confirm('بعضی خانه‌های مقصد متن دارند. محتوای آن‌ها جایگزین شود؟'))return;
+  studioChange(()=>studioApplyCellRepeat(state,day,col.id,targets));
+  dialog.close();toast('متن در '+toFa(targets.length)+' روز تکرار شد؛ می‌توانی Undo بزنی.');
+ };
+ actions.append(cancel,apply);dialog.append(title,description,options,actions);
+ dialog.addEventListener('close',()=>dialog.remove(),{once:true});
+ document.body.append(dialog);dialog.showModal();
+}
+function studioDrawDay(){const host=$('studioDayView');if(!host)return;host.replaceChildren();const day=DAYS[studioDayIndex];for(const col of state.columns){const card=studioElement('section','studio-day-card');const id='studio-'+studioDayIndex+'-'+col.id;const label=studioElement('label','',col.name);label.htmlFor=id;const textarea=studioElement('textarea');textarea.id=id;textarea.maxLength=2000;textarea.placeholder='برنامه این بخش را بنویس...';textarea.value=state.cells[day+'|'+col.id]||'';textarea.setAttribute('aria-label',day+'، '+col.name);textarea.addEventListener('focus',()=>{textarea.dataset.before=JSON.stringify(state)});textarea.addEventListener('input',()=>{state.cells[day+'|'+col.id]=textarea.value;const i=studioDayIndex*state.columns.length+state.columns.indexOf(col);const area=$('editGrid').querySelectorAll('.g-cell textarea')[i];if(area&&area!==textarea){area.value=textarea.value;area.closest('.g-cell').classList.toggle('has-content',!!textarea.value.trim())}updateStats();scheduleSave();studioDrawDensity()});textarea.addEventListener('blur',()=>{const old=textarea.dataset.before;if(old&&old!==JSON.stringify(state)){studioTimeline.push(old);studioTimeline=studioTimeline.slice(-40);studioFuture=[];studioLastSnapshot=JSON.stringify(state);studioUndoButtons()}});const foot=studioElement('footer');const copy=studioElement('button','','کپی');copy.type='button';copy.onclick=async()=>{try{await navigator.clipboard.writeText(textarea.value);toast('متن کپی شد')}catch(e){textarea.select();document.execCommand('copy');toast('متن انتخاب و کپی شد')}};const clear=studioElement('button','','پاک‌کردن');clear.type='button';clear.onclick=()=>{if(!textarea.value)return;studioChange(()=>{delete state.cells[day+'|'+col.id]})};const repeat=studioElement('button','','تکرار در روزها');repeat.type='button';
+ repeat.setAttribute('aria-label','تکرار '+col.name+' در روزهای دیگر');
+ repeat.onclick=()=>studioOpenCellRepeat(day,col);
+ foot.append(copy,repeat,clear);
+ card.addEventListener('contextmenu',e=>{if(e.target===textarea)return;e.preventDefault();studioOpenCellRepeat(day,col)});
+ card.append(label,textarea,foot);host.append(card)}
   $('studioDayHeading').textContent=DAYS[studioDayIndex]+'، '+persianStr(weekDates()[studioDayIndex],true);
 }
 function studioDrawDensity(){const host=$('studioDensity');if(!host)return;host.replaceChildren();const max=state.columns.length;DAYS.forEach(day=>{const count=state.columns.filter(c=>String(state.cells[day+'|'+c.id]||'').trim()).length;const e=studioElement('div','studio-density-day');e.style.setProperty('--density',String(count/Math.max(1,max)));e.append(studioElement('span','',day.slice(0,2)),studioElement('strong','',toFa(count)+' / '+toFa(max)));host.append(e)})}
@@ -1007,6 +1054,18 @@ window.addEventListener('resize',()=>requestAnimationFrame(fitPreview));initDate
 .studio-contrast-note{font-size:12px;color:#16633e;padding:7px 10px;background:#effbf2;border-radius:9px}
 .studio-contrast-note.warning{color:#9d3e12;background:#fff3e9}
 @media(max-width:430px){.studio-advanced-colors{grid-template-columns:1fr 1fr}}
+</style>
+<style>
+.studio-cell-repeat-dialog{width:min(440px,calc(100vw - 32px));max-height:85vh;border:1px solid #d9e5f5;border-radius:20px;padding:20px;color:#172c53;background:#fff;direction:rtl;box-shadow:0 24px 80px #071a3e38}
+.studio-cell-repeat-dialog::backdrop{background:#071a3ba9}
+.studio-cell-repeat-dialog h3{margin:0 0 10px;font-size:17px}
+.studio-cell-repeat-dialog p{margin:0 0 15px;line-height:1.8;color:#566780;font-size:12px}
+.studio-repeat-days{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.studio-repeat-days label{display:flex;align-items:center;gap:9px;border:1px solid #dbe6f3;border-radius:12px;padding:10px;font-size:13px;cursor:pointer}
+.studio-repeat-days input{width:18px;height:18px;accent-color:#326dff}
+.studio-repeat-actions{display:flex;gap:8px;margin-top:18px}
+.studio-repeat-actions button{flex:1;min-height:44px;border:1px solid #d7e1f2;border-radius:10px}
+@media(max-width:410px){.studio-repeat-days{grid-template-columns:1fr}.studio-cell-repeat-dialog{max-height:90vh;overflow:auto}}
 </style>
 <style>
 #installPwaButton{border:1px solid #c9d8fc;background:#f0f5ff;color:#2446aa;font-weight:800}
