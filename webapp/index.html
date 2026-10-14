@@ -359,6 +359,12 @@ async function saveArchiveAfterExport(snapshot,archiveId,kind){
  const item={id,kind,title:data.title||'برنامه بدون عنوان',
   label:(data.title||'برنامه')+' · '+savedAt.display,
   updatedAt:now,data,exportConfirmed:true};
+ // Remember which archived program was used as the source for this new version.
+ if(archiveId===currentPlanId){try{
+  const clone=JSON.parse(sessionStorage.getItem('barname-clone-v1')||'null');
+  if(clone?.draftId===id && typeof clone.sourceId==='string' && clone.sourceId!==id)
+   item.createdFrom=clone.sourceId;
+ }catch(e){}}
  const index=library.findIndex(p=>p.id===id),next=[...library];
  if(index>=0)next.splice(index,1);
  next.unshift(item);
@@ -373,6 +379,7 @@ async function saveArchiveAfterExport(snapshot,archiveId,kind){
  }
  // Commit the in-memory view only after a durable storage write succeeds.
  library=next;selectedLibraryId=id;
+ if(item.createdFrom){try{sessionStorage.removeItem('barname-clone-v1')}catch(e){}}
  if(archiveId===currentPlanId){
   state.audience=kind;
   document.querySelectorAll('input[name=audience]').forEach(r=>r.checked=r.value===kind);
@@ -673,34 +680,56 @@ function studioToggleArchivePin(id){
  if(studioInitComplete)studioWriteIDB('pinned',pins).catch(()=>{});
  renderLibrary();
 }
+function studioArchiveThumbData(item){
+ const plan=item?.data||{},columns=Array.isArray(plan.columns)?plan.columns.slice(0,7):[];
+ const palette=PALETTES[plan.theme]||PALETTES.ocean;
+ const rows=DAYS.map(day=>columns.map(c=>Boolean(String(plan.cells?.[day+'|'+c.id]||'').trim())));
+ return {rows,palette,filled:rows.reduce((n,row)=>n+row.filter(Boolean).length,0),total:7*columns.length};
+}
+function studioArchiveThumb(item){
+ const data=studioArchiveThumbData(item),ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+ svg.setAttribute('viewBox','0 0 112 74');svg.setAttribute('class','studio-archive-thumb');
+ svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+ const rect=(x,y,w,h,fill,rx=1)=>{
+  const r=document.createElementNS(ns,'rect');
+  for(const [k,v] of Object.entries({x,y,width:w,height:h,fill,rx}))r.setAttribute(k,String(v));
+  svg.appendChild(r);
+ };
+ rect(0,0,112,74,data.palette.bg,6);rect(5,5,102,9,data.palette.dark,2);
+ for(let r=0;r<7;r++)for(let c=0;c<7;c++){
+  const exists=c<data.rows[r].length;
+  rect(5+15*c,17+7.4*r,12,5.5,
+   exists?(data.rows[r][c]?data.palette.accent:data.palette.cell):data.palette.soft);
+ }
+ return svg;
+}
 function archiveItemUI(item){
- const row=document.createElement('div');
- row.className='saved-program-row';
+ const row=document.createElement('div');row.className='saved-program-row';
  const btn=document.createElement('button');
  btn.type='button';btn.className='saved-program'+(item.id===selectedLibraryId?' active':'');
- const content=document.createElement('span');
- const title=document.createElement('strong');
- title.textContent=item.label||(item.title||'بدون عنوان')+' · '+(item.updatedAt?timestampInfo(new Date(item.updatedAt)).display:'');
- const small=document.createElement('small');
- const d=new Date(item.updatedAt||Date.now());
- small.textContent=Number.isNaN(d.getTime())?'':(item.exportConfirmed?'ثبت خروجی':'آرشیو نسخه قبل')+': '+
-  persianStr(new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(),12)),true);
- content.append(title,small);btn.append(content);
+ const detail=document.createElement('span');detail.className='studio-archive-details';
+ const title=document.createElement('strong');title.textContent=item.label||(item.title||'بدون عنوان')+
+  (item.updatedAt?' · '+timestampInfo(new Date(item.updatedAt)).display:'');
+ const date=document.createElement('small'),d=new Date(item.updatedAt||Date.now());
+ date.textContent=(item.exportConfirmed?'ثبت خروجی':'آرشیو نسخه قبل')+
+  (Number.isNaN(d.getTime())?'':': '+persianStr(new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(),12)),true));
+ const mini=studioArchiveThumbData(item),count=document.createElement('small');
+ count.className='studio-archive-count';
+ count.textContent=toFa(mini.filled)+' از '+toFa(mini.total)+' خانه دارای متن';
+ detail.append(title,date,count);
+ btn.append(studioArchiveThumb(item),detail);
  btn.setAttribute('aria-label','مشاهده برنامه '+String(item.title||'بدون عنوان'));
  btn.onclick=()=>{selectedLibraryId=item.id;zoomPercent=100;$('zoomRange').value=100;renderLibrary()};
  btn.oncontextmenu=e=>{e.preventDefault();studioToggleArchivePin(item.id)};
- const star=document.createElement('button');star.type='button';
- const pinned=studioPinned.has(item.id);
- star.className='saved-pin'+(pinned?' pinned':'');
- star.textContent=pinned?'★':'☆';
+ const star=document.createElement('button'),pinned=studioPinned.has(item.id);
+ star.type='button';star.className='saved-pin'+(pinned?' pinned':'');star.textContent=pinned?'★':'☆';
  star.setAttribute('aria-pressed',String(pinned));
  star.setAttribute('aria-label',(pinned?'برداشتن سنجاق از ':'سنجاق‌کردن ')+'برنامه '+String(item.title||'بدون عنوان'));
  star.title=pinned?'حذف از علاقه‌مندی‌ها':'افزودن به علاقه‌مندی‌ها';
  star.onclick=()=>studioToggleArchivePin(item.id);
- row.append(btn,star);
- return row;
+ row.append(btn,star);return row;
 }
-function renderLibrary(){for(const [kind,id,countId] of [['self','selfPlans','selfCount'],['others','otherPlans','othersCount']]){const host=$(id);host.replaceChildren();const group=library.filter(p=>(p.kind==='others'?'others':'self')===kind).filter(studioLibraryMatches).sort((a,b)=>studioPinned.has(a.id)!==studioPinned.has(b.id)?(studioPinned.has(a.id)?-1:1):studioLibrarySort==='oldest'?(a.updatedAt||0)-(b.updatedAt||0):studioLibrarySort==='alpha'?String(a.title||a.label||'').localeCompare(String(b.title||b.label||''),'fa'):(b.updatedAt||0)-(a.updatedAt||0));$(countId).textContent=toFa(group.length);if(!group.length){const empty=document.createElement('div');empty.className='library-empty';empty.textContent=studioLibraryQuery?'برنامه‌ای با این عبارت پیدا نشد.':(kind==='self'?'بعد از خروجی و تأیید ذخیره، برنامه‌های خودت اینجا دیده می‌شن.':'برنامه‌های دیگران بعد از خروجی و تأیید ذخیره، اینجا دیده می‌شن.');host.append(empty)}else group.forEach(p=>host.append(archiveItemUI(p)))}let item=currentItem(),no=!item;for(const id of ['libraryPng','libraryPdf','libraryOpen','libraryDelete','zoomOut','zoomIn','zoomRange'])$(id).disabled=no;$('selectedPlanTitle').textContent=item?.label||item?.title||'یک برنامه از دو ستون انتخاب کن';$('selectedPlanMeta').textContent=item?(item.kind==='others'?'برای دیگران':'برای خودم')+' • '+persianStr(fromIso(item.data.startDate),true):'برای مشاهده پیش‌نمایش، روی عنوان برنامه بزن.';$('libraryPreviewSheet').replaceChildren(...(item?[makeSheet(normalize(item.data))]:[]));requestAnimationFrame(scaleLibraryPreview)}
+function renderLibrary(){for(const [kind,id,countId] of [['self','selfPlans','selfCount'],['others','otherPlans','othersCount']]){const host=$(id);const scrollPosition=host.scrollTop;host.replaceChildren();const group=library.filter(p=>(p.kind==='others'?'others':'self')===kind).filter(studioLibraryMatches).sort((a,b)=>studioPinned.has(a.id)!==studioPinned.has(b.id)?(studioPinned.has(a.id)?-1:1):studioLibrarySort==='oldest'?(a.updatedAt||0)-(b.updatedAt||0):studioLibrarySort==='alpha'?String(a.title||a.label||'').localeCompare(String(b.title||b.label||''),'fa'):(b.updatedAt||0)-(a.updatedAt||0));$(countId).textContent=toFa(group.length);if(!group.length){const empty=document.createElement('div');empty.className='library-empty';empty.textContent=studioLibraryQuery?'برنامه‌ای با این عبارت پیدا نشد.':(kind==='self'?'بعد از خروجی و تأیید ذخیره، برنامه‌های خودت اینجا دیده می‌شن.':'برنامه‌های دیگران بعد از خروجی و تأیید ذخیره، اینجا دیده می‌شن.');host.append(empty)}else group.forEach(p=>host.append(archiveItemUI(p)));host.scrollTop=scrollPosition;}let item=currentItem(),no=!item;for(const id of ['libraryPng','libraryPdf','libraryOpen','libraryDelete','zoomOut','zoomIn','zoomRange'])$(id).disabled=no;$('selectedPlanTitle').textContent=item?.label||item?.title||'یک برنامه از دو ستون انتخاب کن';$('selectedPlanMeta').textContent=item?(item.kind==='others'?'برای دیگران':'برای خودم')+' • '+persianStr(fromIso(item.data.startDate),true)+(item.createdFrom?' • نسخه مشتق‌شده از یک برنامه قبلی':''):'برای مشاهده پیش‌نمایش، روی عنوان برنامه بزن.';$('libraryPreviewSheet').replaceChildren(...(item?[makeSheet(normalize(item.data))]:[]));requestAnimationFrame(scaleLibraryPreview)}
 function scaleLibraryPreview(){const el=$('libraryPreviewSheet'),size=$('libraryPreviewSize'),viewport=$('libraryViewport');if(!el.firstChild){size.style.height='90px';return}const natural=980,base=Math.min(1,Math.max(.15,(viewport.clientWidth-24)/natural)),scale=base*(zoomPercent/100);el.style.transform=`scale(${scale})`;size.style.width=Math.ceil(natural*scale)+'px';size.style.height=Math.ceil(el.scrollHeight*scale)+'px';$('zoomLabel').textContent=toFa(zoomPercent)+'٪'}
 function openLibrary(){clearTimeout(timer);save();if(!library.some(p=>p.id===selectedLibraryId))selectedLibraryId=library[0]?.id||null;renderLibrary();updateArchiveStorageStatus();showModal('libraryModal');requestAnimationFrame(scaleLibraryPreview)}
 function openSaved(){let item=currentItem();if(!item)return;clearTimeout(timer);save();state=normalize(item.data);currentPlanId=item.id;hideModal('libraryModal');rebuild();save();setTab('edit');$('editorAnchor').scrollIntoView({behavior:'smooth',block:'start'});toast('نسخه ویرایشی باز شد؛ تغییرات فقط بعد از خروجی و تأیید، در آرشیو اعمال می‌شوند.')}
@@ -791,7 +820,7 @@ function studioDrawDensity(){const host=$('studioDensity');if(!host)return;host.
 function studioCopyDay(){const current=DAYS[studioDayIndex];const targets=DAYS.map((day,i)=>i===studioDayIndex?null:`${i+1}: ${day}`).filter(Boolean).join('، ');const response=prompt('کدام روز مقصد باشد؟ شماره را وارد کن: '+targets,'2');if(response==null)return;const idx=Number(toEn(response))-1;if(!Number.isInteger(idx)||idx<0||idx>6||idx===studioDayIndex){toast('روز مقصد معتبر نیست');return}if(!confirm('برنامه '+current+' به '+DAYS[idx]+' کپی شود؟ محتوای مقصد جایگزین می‌شود.'))return;studioChange(()=>{for(const c of state.columns)state.cells[DAYS[idx]+'|'+c.id]=state.cells[current+'|'+c.id]||''});toast('برنامه روز کپی شد')}
 function studioNextWeek(){if(!confirm('یک برنامه تازه برای هفته بعد با همین محتوا ساخته شود؟ پیش‌نویس فعلی تغییر می‌کند، آرشیوهای قبلی محفوظ‌اند.'))return;studioChange(()=>{state.startDate=iso(addDay(fromIso(state.startDate),7))});currentPlanId=uid();save();toast('نسخه جدید هفته بعد ساخته شد')}
 function studioToday(){const n=new Date(),d=new Date(Date.UTC(n.getFullYear(),n.getMonth(),n.getDate(),12));studioChange(()=>{state.startDate=iso(saturday(d))});studioSetDay((d.getUTCDay()+1)%7)}
-function studioDuplicateArchive(){const item=currentItem();if(!item)return;const snapshot=normalize(item.data);hideModal('libraryModal');studioChange(()=>{state=snapshot});currentPlanId=uid();save();toast('کپی مستقل ساخته شد؛ برای ثبت در آرشیو از خروجی استفاده کن')}
+function studioDuplicateArchive(){const item=currentItem();if(!item)return;if(!confirm('یک نسخه جدید از «'+String(item.title||'برنامه')+'» بسازیم؟ پیش‌نویس فعلی جایگزین می‌شود، اما برنامه اصلی در آرشیو باقی می‌ماند.'))return;clearTimeout(timer);save();const snapshot=normalize(item.data),sourceId=item.id;hideModal('libraryModal');studioChange(()=>{state=snapshot});currentPlanId=uid();try{sessionStorage.setItem('barname-clone-v1',JSON.stringify({draftId:currentPlanId,sourceId}))}catch(e){}save();toast('کپی مستقل ساخته شد؛ برنامه اصلی دست‌نخورده مانده است. برای ثبت نسخه جدید خروجی بگیر.')}
 function studioTemplates(){const dialog=$('studioStarterDialog');if(!dialog)return;studioRenderUserTemplates();dialog.showModal()}
 function studioSaveCustomTemplate(){const label=prompt('نام قالب شخصی جدید را بنویس','قالب برنامه من');if(label==null)return;const name=label.trim().slice(0,40);if(!name){toast('نام قالب لازم است');return}if(studioSavedTemplates.length>=30){toast('حداکثر ۳۰ قالب شخصی می‌توان ساخت');return}studioSavedTemplates.push({id:uid(),label:name,data:normalize(state)});studioWriteIDB('templates',studioSavedTemplates);try{localStorage.setItem('barname-user-templates-v2',JSON.stringify(studioSavedTemplates))}catch(e){toast('ذخیره قالب در مرورگر ممکن نیست؛ از پشتیبان استفاده کن')}studioRenderUserTemplates();toast('قالب شخصی ثبت شد')}
 function studioRenderUserTemplates(){const host=$('studioUserTemplateList');if(!host)return;host.replaceChildren();for(const t of studioSavedTemplates){const line=studioElement('div','studio-user-template');const btn=studioElement('button','studio-template',t.label);btn.type='button';btn.onclick=()=>{if(!confirm('قالب شخصی «'+t.label+'» جایگزین پیش‌نویس فعلی شود؟'))return;studioChange(()=>{state=normalize(t.data)});currentPlanId=uid();save();$('studioStarterDialog').close();toast('قالب شخصی بارگذاری شد')};const del=studioElement('button','studio-template-delete','×');del.type='button';del.title='حذف قالب '+t.label;del.setAttribute('aria-label','حذف قالب '+t.label);del.onclick=()=>{if(!confirm('قالب «'+t.label+'» حذف شود؟'))return;studioSavedTemplates=studioSavedTemplates.filter(x=>x.id!==t.id);studioWriteIDB('templates',studioSavedTemplates);try{localStorage.setItem('barname-user-templates-v2',JSON.stringify(studioSavedTemplates))}catch(e){}studioRenderUserTemplates()};line.append(btn,del);host.append(line)}}
@@ -899,6 +928,14 @@ window.addEventListener('resize',()=>requestAnimationFrame(fitPreview));initDate
 .saved-pin.pinned{background:#fff4d9;border-color:#e6b863;color:#b57a0d}
 .saved-pin:focus-visible{outline:3px solid #326dff;outline-offset:2px}
 @media(max-width:700px){.saved-program-row>.saved-program{min-height:54px}.saved-pin{flex-basis:46px;width:46px;height:46px}}
+</style>
+<style>
+.studio-archive-thumb{display:block;flex:0 0 112px;width:112px;height:74px;border:1px solid #d6e0ef;border-radius:8px;overflow:hidden}
+.saved-program .studio-archive-details{display:flex;flex-direction:column;min-width:0;flex:1;gap:3px;overflow:hidden}
+.saved-program .studio-archive-details strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.saved-program .studio-archive-details small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.saved-program .studio-archive-count{color:#416ab2;font-size:10px}
+@media(max-width:430px){.studio-archive-thumb{flex-basis:84px;width:84px;height:56px}.saved-program-row>.saved-program{gap:7px;padding:7px}.saved-program .studio-archive-details strong{font-size:11px}}
 </style>
 <style>
 #installPwaButton{border:1px solid #c9d8fc;background:#f0f5ff;color:#2446aa;font-weight:800}
