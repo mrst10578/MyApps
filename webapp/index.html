@@ -222,7 +222,20 @@ body{background:linear-gradient(180deg,#eef3fa,#f9fbff 63%,#eef3fa);}
 </div>
 <div class="modal" id="themeModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="themeModalTitle">
  <div class="modal-backdrop" data-close="themeModal"></div><div class="modal-card theme-card"><div class="modal-header"><div><span class="modal-kicker">استودیوی قالب</span><h2 id="themeModalTitle">ساخت قالب جدید</h2><p class="modal-sub">رنگ‌ها را انتخاب کن؛ ساختار جدول و نسبت رنگ‌ها خودکار تنظیم می‌شوند.</p></div><button class="modal-close" data-close="themeModal" aria-label="بستن">×</button></div>
- <div class="theme-builder"><div class="theme-controls"><label>نام قالب<input id="customThemeName" maxlength="32" placeholder="مثلاً آبی اقیانوسی" value="قالب اختصاصی من"></label><label>رنگ اصلی<input type="color" id="customThemeAccent" value="#3468db"></label><label>رنگ زمینه<input type="color" id="customThemeBg" value="#eff5ff"></label><label>رنگ نوشته<input type="color" id="customThemeInk" value="#172c53"></label><p class="helper">رنگ متن در صورت کم بودن کنتراست به‌صورت خودکار اصلاح می‌شود. هیچ کد CSS یا HTML وارد برنامه نمی‌شود.</p><button id="createTheme" class="btn btn-primary">✓ ساخت و استفاده از قالب</button></div><div class="theme-builder-preview"><div id="customThemePreview"></div></div></div>
+ <div class="theme-builder"><div class="theme-controls"><label>نام قالب<input id="customThemeName" maxlength="32" placeholder="مثلاً آبی اقیانوسی" value="قالب اختصاصی من"></label><label>رنگ اصلی<input type="color" id="customThemeAccent" value="#3468db"></label><label>رنگ زمینه<input type="color" id="customThemeBg" value="#eff5ff"></label><label>رنگ نوشته<input type="color" id="customThemeInk" value="#172c53"></label><p class="helper">در حالت خودکار، رنگ‌ها و کنتراست تنظیم می‌شوند. در تنظیم دقیق، خوانایی رنگ‌ها هم بررسی می‌شود.</p>
+<button id="studioAdvancedThemeToggle" type="button" class="btn btn-muted" aria-expanded="false" aria-controls="studioAdvancedThemeColors">⚙ تنظیم دقیق رنگ‌های جدول</button>
+<div id="studioAdvancedThemeColors" class="studio-advanced-colors" hidden>
+<label>رنگ صفحه<input type="color" data-theme-token="bg" value="#eff5ff"></label>
+<label>رنگ متن اصلی<input type="color" data-theme-token="dark" value="#172c53"></label>
+<label>رنگ شاخص<input type="color" data-theme-token="accent" value="#3468db"></label>
+<label>پس‌زمینه سربرگ<input type="color" data-theme-token="soft" value="#dce7ff"></label>
+<label>رنگ خانه‌های جدول<input type="color" data-theme-token="cell" value="#ffffff"></label>
+<label>رنگ خطوط جدول<input type="color" data-theme-token="line" value="#c9d8ef"></label>
+<label>رنگ متن فرعی<input type="color" data-theme-token="muted" value="#667b9d"></label>
+<button type="button" id="studioResetThemeColors" class="btn btn-muted">بازگرداندن رنگ‌های هماهنگ خودکار</button>
+</div>
+<p id="studioThemeContrastNote" class="studio-contrast-note" role="status" aria-live="polite"></p>
+<button id="createTheme" class="btn btn-primary">✓ ساخت و استفاده از قالب</button></div><div class="theme-builder-preview"><div id="customThemePreview"></div></div></div>
  </div></div>
 <div class="modal" id="exportSaveModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="exportSaveTitle" aria-describedby="exportSaveDescription">
   <div class="modal-backdrop" data-close="exportSaveModal"></div>
@@ -750,8 +763,54 @@ function luminance(c){let v=rgb(c).map(x=>x/255).map(x=>x<=.04045?x/12.92:((x+.0
 function contrast(a,b){let x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
 function ensureContrast(color,bg,ratio=4.6){let to=luminance(bg)>.40?'#0c1832':'#ffffff',found=color;for(let i=0;i<=20;i++){if(contrast(found,bg)>=ratio)return found;found=blend(color,to,(i+1)/20)}return to}
 function derivedPalette(accent,bg,ink){let isDark=luminance(bg)<.22,cell=blend(bg,isDark?'#ffffff':'#ffffff',isDark?.075:.73),soft=blend(bg,accent,isDark?.17:.12);let dark=ensureContrast(ink,cell,5),accentChecked=ensureContrast(accent,soft,3.1),muted=ensureContrast(blend(dark,bg,.38),cell,4.5);return {bg,dark,accent:accentChecked,soft,cell,line:blend(cell,dark,isDark?.25:.17),muted}}
-function previewNewTheme(){const p=derivedPalette($('customThemeAccent').value,$('customThemeBg').value,$('customThemeInk').value),demo=def();demo.theme='__designer';demo.title='پیش‌نمایش قالب اختصاصی';demo.subtitle='رنگ‌ها تغییر می‌کنند، جدول ثابت می‌ماند.';demo.cells['شنبه|c1']='مطالعه فصل اول\n۲۰ تست';demo.cells['دوشنبه|c3']='مرور و جمع‌بندی';PALETTES.__designer=p;const el=makeSheet(demo);el.classList.add('custom-theme');for(let [key,cssVar] of Object.entries({bg:'--sheet-bg',dark:'--sheet-ink',accent:'--sheet-accent',soft:'--sheet-soft',cell:'--sheet-white',line:'--sheet-line',muted:'--sheet-secondary'}))el.style.setProperty(cssVar,p[key]);$('customThemePreview').replaceChildren(el);$('themeContrastNote')?.remove()}
-function saveNewTheme(){let title=$('customThemeName').value.trim().slice(0,32);if(!title){toast('نام قالب را وارد کن.');$('customThemeName').focus();return}if(customThemes.length>=30){toast('حداکثر ۳۰ قالب اختصاصی می‌توان ساخت.');return}let colors=derivedPalette($('customThemeAccent').value,$('customThemeBg').value,$('customThemeInk').value);let id='user-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),item={id,label:title,colors};customThemes.push(item);PALETTES[id]=colors;PRESETS.push([id,title]);if(studioInitComplete)studioWriteIDB('themes',customThemes);try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(customThemes))}catch(e){toast('قالب فقط تا زمان بسته‌شدن این صفحه در دسترس است.')}state.theme=id;renderThemes();updatePreview();scheduleSave();hideModal('themeModal');toast('قالب سازگار «'+title+'» اضافه شد.')}
+let studioAdvancedThemeEnabled=false;
+const studioThemeTokenKeys=['bg','dark','accent','soft','cell','line','muted'];
+function studioThemeCurrentPalette(){
+ const automatic=derivedPalette($('customThemeAccent').value,$('customThemeBg').value,$('customThemeInk').value);
+ if(!studioAdvancedThemeEnabled)return automatic;
+ const tokens={};
+ for(const key of studioThemeTokenKeys){
+  const input=document.querySelector('[data-theme-token="'+key+'"]');
+  const value=input?.value;
+  tokens[key]=/^#[0-9a-f]{6}$/i.test(value||'')?value:automatic[key];
+ }
+ return tokens;
+}
+function studioThemeContrastStatus(palette){
+ const body=contrast(palette.dark,palette.cell);
+ const heading=contrast(palette.dark,palette.bg);
+ const auxiliary=contrast(palette.muted,palette.cell);
+ return {body,heading,auxiliary,ok:body>=4.5&&heading>=4.5&&auxiliary>=4.5};
+}
+function studioThemeCopyAutomatic(){
+ const palette=derivedPalette($('customThemeAccent').value,$('customThemeBg').value,$('customThemeInk').value);
+ for(const key of studioThemeTokenKeys){
+  const input=document.querySelector('[data-theme-token="'+key+'"]');
+  if(input)input.value=palette[key];
+ }
+}
+function studioThemeSetup(){
+ const toggle=$('studioAdvancedThemeToggle'),controls=$('studioAdvancedThemeColors');
+ if(!toggle||!controls)return;
+ toggle.onclick=()=>{
+  studioAdvancedThemeEnabled=!studioAdvancedThemeEnabled;
+  if(studioAdvancedThemeEnabled)studioThemeCopyAutomatic();
+  controls.hidden=!studioAdvancedThemeEnabled;
+  toggle.setAttribute('aria-expanded',String(studioAdvancedThemeEnabled));
+  toggle.textContent=studioAdvancedThemeEnabled?'✓ تنظیم دقیق فعال است':'⚙ تنظیم دقیق رنگ‌های جدول';
+  previewNewTheme();
+ };
+ for(const input of document.querySelectorAll('[data-theme-token]'))input.addEventListener('input',previewNewTheme);
+ $('studioResetThemeColors').onclick=()=>{studioThemeCopyAutomatic();previewNewTheme()};
+}
+function previewNewTheme(){const p=studioThemeCurrentPalette(),demo=def();demo.theme='__designer';demo.title='پیش‌نمایش قالب اختصاصی';demo.subtitle='رنگ‌ها تغییر می‌کنند، جدول ثابت می‌ماند.';demo.cells['شنبه|c1']='مطالعه فصل اول\n۲۰ تست';demo.cells['دوشنبه|c3']='مرور و جمع‌بندی';PALETTES.__designer=p;const el=makeSheet(demo);el.classList.add('custom-theme');for(let [key,cssVar] of Object.entries({bg:'--sheet-bg',dark:'--sheet-ink',accent:'--sheet-accent',soft:'--sheet-soft',cell:'--sheet-white',line:'--sheet-line',muted:'--sheet-secondary'}))el.style.setProperty(cssVar,p[key]);$('customThemePreview').replaceChildren(el);
+ const status=studioThemeContrastStatus(p),note=$('studioThemeContrastNote');
+ if(note){
+  note.textContent=status.ok?'✓ کنتراست رنگ‌های متن مناسب است.':'⚠ کنتراست نوشته‌ها کافی نیست؛ رنگ متن اصلی یا فرعی را تغییر بده.';
+  note.classList.toggle('warning',!status.ok);
+ }
+ $('themeContrastNote')?.remove()}
+function saveNewTheme(){let title=$('customThemeName').value.trim().slice(0,32);if(!title){toast('نام قالب را وارد کن.');$('customThemeName').focus();return}if(customThemes.length>=30){toast('حداکثر ۳۰ قالب اختصاصی می‌توان ساخت.');return}let colors=studioThemeCurrentPalette();if(studioAdvancedThemeEnabled&&!studioThemeContrastStatus(colors).ok){toast('رنگ متن با پس‌زمینه تضاد کافی ندارد؛ رنگ‌ها را اصلاح کن.');return}let id='user-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),item={id,label:title,colors};customThemes.push(item);PALETTES[id]=colors;PRESETS.push([id,title]);if(studioInitComplete)studioWriteIDB('themes',customThemes);try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(customThemes))}catch(e){toast('قالب فقط تا زمان بسته‌شدن این صفحه در دسترس است.')}state.theme=id;renderThemes();updatePreview();scheduleSave();hideModal('themeModal');toast('قالب سازگار «'+title+'» اضافه شد.')}
 /* Persian calendar: locally embedded selected recurring dates plus optionally fetched per-year event data. */
 const FALLBACK_OCCASIONS={
 '01-01':['جشن نوروز / آغاز سال نو'],'01-02':['عید نوروز'],'01-03':['عید نوروز'],'01-04':['عید نوروز'],'01-12':['روز جمهوری اسلامی ایران'],'01-13':['روز طبیعت'],'02-01':['روز بزرگداشت سعدی'],'02-12':['روز معلم'],'02-25':['روز بزرگداشت فردوسی'],'03-03':['فتح خرمشهر'],'03-14':['سالگرد رحلت امام خمینی'],'03-15':['قیام ۱۵ خرداد'],'04-07':['روز قوه قضاییه'],'04-10':['روز صنعت و معدن'],'05-08':['روز بزرگداشت شیخ شهاب‌الدین سهروردی'],'05-17':['روز خبرنگار'],'06-01':['روز پزشک'],'06-04':['روز کارمند'],'06-13':['روز بزرگداشت ابوریحان بیرونی'],'06-27':['روز شعر و ادب فارسی'],'07-07':['روز آتش‌نشانی و ایمنی'],'07-13':['روز نیروی انتظامی'],'07-20':['روز بزرگداشت حافظ'],'08-13':['روز دانش‌آموز'],'08-24':['روز کتاب و کتابخوانی'],'09-16':['روز دانشجو'],'09-30':['شب یلدا'],'10-20':['سالروز شهادت امیرکبیر'],'11-12':['سالروز بازگشت امام خمینی به ایران'],'11-22':['پیروزی انقلاب اسلامی'],'12-05':['روز مهندس'],'12-15':['روز درختکاری'],'12-29':['روز ملی شدن صنعت نفت']};
@@ -917,7 +976,7 @@ function studioStart(){studioMakeBoard();studioInitComplete=true;studioLastSnaps
  const startSave=save;/* Mirror is called from the patched save() function; no change to original primary localStorage path. */
 }
 
-window.addEventListener('resize',()=>requestAnimationFrame(fitPreview));initDates();bindSettings();initExtras();rebuild();save();studioStart();
+window.addEventListener('resize',()=>requestAnimationFrame(fitPreview));initDates();bindSettings();initExtras();studioThemeSetup();rebuild();save();studioStart();
 })();
 </script>
 
@@ -936,6 +995,16 @@ window.addEventListener('resize',()=>requestAnimationFrame(fitPreview));initDate
 .saved-program .studio-archive-details small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .saved-program .studio-archive-count{color:#416ab2;font-size:10px}
 @media(max-width:430px){.studio-archive-thumb{flex-basis:84px;width:84px;height:56px}.saved-program-row>.saved-program{gap:7px;padding:7px}.saved-program .studio-archive-details strong{font-size:11px}}
+</style>
+<style>
+.studio-advanced-colors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;border:1px solid #d5e0f2;border-radius:12px;background:#f6f9ff;padding:10px}
+.studio-advanced-colors[hidden]{display:none!important}
+.studio-advanced-colors label{min-width:0;font-size:11px}
+.studio-advanced-colors input[type=color]{width:100%;min-width:0}
+.studio-advanced-colors button{grid-column:1/-1}
+.studio-contrast-note{font-size:12px;color:#16633e;padding:7px 10px;background:#effbf2;border-radius:9px}
+.studio-contrast-note.warning{color:#9d3e12;background:#fff3e9}
+@media(max-width:430px){.studio-advanced-colors{grid-template-columns:1fr 1fr}}
 </style>
 <style>
 #installPwaButton{border:1px solid #c9d8fc;background:#f0f5ff;color:#2446aa;font-weight:800}

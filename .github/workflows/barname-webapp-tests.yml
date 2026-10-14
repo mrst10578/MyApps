@@ -23,3 +23,5 @@ jobs:
         run: node webapp/tests/library-regression.cjs
       - name: Test archive previews and duplicate lineage
         run: node webapp/tests/archive-preview-regression.cjs
+      - name: Test advanced theme designer and contrast
+        run: node webapp/tests/theme-designer-regression.cjs
