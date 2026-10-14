@@ -1,4 +1,4 @@
-const VERSION='haftehnegar-pwa-barname-v7-20261014';
+const VERSION='haftehnegar-pwa-barname-v8-20261014';
 const APP_FILES=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(VERSION).then(cache=>cache.addAll(APP_FILES)).then(()=>self.skipWaiting()));
