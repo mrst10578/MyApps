@@ -694,10 +694,12 @@ function studioToggleArchivePin(id){
  renderLibrary();
 }
 function studioArchiveThumbData(item){
- const plan=item?.data||{},columns=Array.isArray(plan.columns)?plan.columns.slice(0,7):[];
- const palette=PALETTES[plan.theme]||PALETTES.ocean;
- const rows=DAYS.map(day=>columns.map(c=>Boolean(String(plan.cells?.[day+'|'+c.id]||'').trim())));
- return {rows,palette,filled:rows.reduce((n,row)=>n+row.filter(Boolean).length,0),total:7*columns.length};
+ const plan=item?.data||{},allColumns=Array.isArray(plan.columns)?plan.columns:[];
+ const columns=allColumns.slice(0,7),palette=PALETTES[plan.theme]||PALETTES.ocean;
+ const used=(day,c)=>Boolean(String(plan.cells?.[day+'|'+c.id]||'').trim());
+ const rows=DAYS.map(day=>columns.map(c=>used(day,c)));
+ const filled=DAYS.reduce((n,day)=>n+allColumns.filter(c=>used(day,c)).length,0);
+ return {rows,palette,filled,total:7*allColumns.length};
 }
 function studioArchiveThumb(item){
  const data=studioArchiveThumbData(item),ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
